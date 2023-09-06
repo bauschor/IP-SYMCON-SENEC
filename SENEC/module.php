@@ -7,7 +7,7 @@
             // Diese Zeile nicht löschen.
             parent::Create();
 
-            $this->RegisterPropertyString("SENEC_API_Base_Url", "https://app-gateway-prod.senecops.com/v1/senec/");
+            $this->RegisterPropertyString("SENEC_API_Base_Url", "https://app-gateway-prod.senecops.com/v1/senec");
             $this->RegisterPropertyString("SENEC_API_Login_Stub", "login");
             $this->RegisterPropertyString("SENEC_API_Anlagen_Stub", "anlagen");
 
@@ -41,13 +41,13 @@
             $password  = $this->ReadPropertyString("SENEC_API_Password");            
 
             $credentials = '{
-                "username": $username,
-                "password": $password
+                "username": "'.$username.'",
+                "password": "'.$password.'"
             }';
 
             $curl = curl_init();                                                            // los geht's
 
-            curl_setopt($curl, CURLOPT_URL, $baseurl."/".$loginstub);                                     // URL zum Loginformular
+            curl_setopt($curl, CURLOPT_URL, $baseurl."/".$loginstub);                       // URL zum Loginformular
             curl_setopt($curl, CURLOPT_POST, true);                                         // Ein POST request soll es werden
             curl_setopt($curl, CURLOPT_POSTFIELDS, $credentials);                           // Die Infos als JSON Body schicken
             
