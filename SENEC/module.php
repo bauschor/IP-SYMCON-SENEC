@@ -6,7 +6,10 @@
         public function Create() {
             // Diese Zeile nicht löschen.
             parent::Create();
-
+		
+            $this->RegisterPropertyString("SENEC_API_Username", "" };
+	    $this->RegisterPropertyString("SENEC_API_Password", "" };
+		
             $this->RegisterPropertyString("SENEC_API_Base_Url", "https://app-gateway-prod.senecops.com/v1/senec");
             $this->RegisterPropertyString("SENEC_API_Login_Stub", "login");
             $this->RegisterPropertyString("SENEC_API_Anlagen_Stub", "anlagen");
