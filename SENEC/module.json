@@ -1,0 +1,15 @@
+{
+    "id": "{4FCE3B59-2E68-E414-6560-0DE75B192763}",
+    "name": "SymconSenecData",
+    "url": "https://github.com/bauschor/IP-SYMCON-SENEC",
+    "type": 3,
+    "vendor": "SENEC",
+    "aliases":
+    [
+        "SENEC Data Reader"
+    ],
+    "parentRequirements": [],
+    "childRequirements": [],
+    "implemented": [],
+    "prefix": "SENEC"
+}
