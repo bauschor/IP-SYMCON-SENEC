@@ -10,7 +10,6 @@
     ],
     "actions":
     [
-        { "type": "ValidationTextBox", "name": "SENEC Logintest", "caption": "SENEC Device" },
         { "type": "Button", "label": "Test", "onClick": "SENEC_GetToken($id);" }
     ]
 }
