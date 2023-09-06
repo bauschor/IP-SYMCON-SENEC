@@ -4,7 +4,7 @@
         { "type": "ValidationTextBox", "name": "SENEC_API_Username", "caption": "Username für mein-senec.de" },
         { "type": "ValidationTextBox", "name": "SENEC_API_Password", "caption": "Passwort for mein-senec.de" },        
         
-        { "type": "ValidationTextBox", "name": "SENEC_API_Base_Url", "caption": "Base URL" },
+        { "type": "ValidationTextBox", "name": "SENEC_API_Base_Url", "caption": "Base URL", "multiline": "true" },
         { "type": "ValidationTextBox", "name": "SENEC_API_Login_Stub", "caption": "Login Stub" },
         { "type": "ValidationTextBox", "name": "SENEC_API_Anlagen_Stub", "caption": "Anlagen" }
     ],
