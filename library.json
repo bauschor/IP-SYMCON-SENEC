@@ -1,0 +1,12 @@
+{
+	"id": "{52349B33-77FC-3D38-7507-9650A7BCDFAB}",
+	"author": "Oliver Bausch",
+	"name": "IP-SYMCON-SENEC",
+	"url": "https://github.com/bauschor/IP-SYMCON-SENEC.git",
+	"compatibility": {
+		"version": "5.5"
+	},
+	"version": "0.1",
+	"build": 0,
+	"date": 0
+}
