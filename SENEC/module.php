@@ -181,7 +181,7 @@
         private function _setIPSvar($parentID, $name, $value){
 
             $ident = str_replace(array("-", "/"), "_", $name);
-            $ips_type = _getIPStype($value);
+            $ips_type = $this->_getIPStype($value);
 
             switch ($ips_type){
             case 31:                                         // array
