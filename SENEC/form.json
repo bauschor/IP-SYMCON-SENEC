@@ -3,7 +3,6 @@
     [
         { "type": "ValidationTextBox", "name": "SENEC_API_Username", "caption": "Username für mein-senec.de" },
         { "type": "ValidationTextBox", "name": "SENEC_API_Password", "caption": "Passwort for mein-senec.de" },        
-        { "type": "ValidationTextBox", "name": "Module_Update_interval", "caption": "Updatezyklus (Minuten)" },
         
         { "type": "ValidationTextBox", "name": "SENEC_API_Base_Url", "caption": "Base URL", "multiline": "true" },
         { "type": "ValidationTextBox", "name": "SENEC_API_Login_Stub", "caption": "Login Stub" },
