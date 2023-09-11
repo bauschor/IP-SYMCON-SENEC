@@ -8,28 +8,25 @@
         { "type": "ValidationTextBox", "name": "SENEC_API_Login_Stub", "caption": "Login Stub" },
         { "type": "ValidationTextBox", "name": "SENEC_API_Anlagen_Stub", "caption": "Anlagen Stub" },
         { "type": "ValidationTextBox", "name": "SENEC_API_Data_Stub", "caption": "Data Stub" },
-        { "type": "NumberSpinner", "name": "SENEC_API_Data_Update_Interval", "caption": "Updatezyklus (Minuten)" },
+        { "type": "NumberSpinner", "name": "SENEC_API_Data_Update_Interval", "caption": "API Updatezyklus (Minuten)" },
 
-        {
-            "type": "PopupAlert",
-            "name": "InfoPopup",
-            "visible": false,
+
+        { "type": "ValidationTextBox", "name": "SENEC_Local_IP", "caption": "IP-Adresse des SENEC Moduls" },
+        { "type": "NumberSpinner", "name": "SENEC_Local_Data_Update_Interval", "caption": "lokaler Updatezyklus (Sekunden)" },
+
+
+        { "type": "PopupAlert", "name": "InfoPopup", "visible": false,
             "popup": {
                 "items": [
-                    {
-                         "type": "Label",
-                         "name": "InfoPopup_Text",
-                         "caption": "Hi"
-                    }
+                        { "type": "Label", "name": "InfoPopup_Text", "caption": "Hi" }
                 ]
             }
         }
-
     ],
     "actions":
     [
-        { "type": "Button", "label": "GetToken", "onClick": "SENEC_GetToken($id);" },
-        { "type": "Button", "label": "GetAnlagenID", "onClick": "SENEC_GetID($id);" },
-        { "type": "Button", "label": "GetData", "onClick": "SENEC_GetData($id);" }
+        { "type": "Button", "label": "GetToken", "onClick": "SENEC_API_GetToken($id);" },
+        { "type": "Button", "label": "GetAnlagenID", "onClick": "SENEC_API_GetID($id);" },
+        { "type": "Button", "label": "GetData", "onClick": "SENEC_API_GetData($id);" }
     ]
 }

@@ -16,11 +16,16 @@
             $this->RegisterPropertyString("SENEC_API_Data_Stub", "dashboard");
 
             $this->RegisterPropertyInteger("SENEC_API_Data_Update_Interval", 6);
+            $this->RegisterTimer("SENEC_API_Update_Data", 60*1000, "SENEC_API_GetData($this->InstanceID);");
+
+
+            $this->RegisterPropertyString("SENEC_Local_IP", "");
+            $this->RegisterPropertyInteger("SENEC_Local_Data_Update_Interval", 10);
+            $this->RegisterTimer("SENEC_Local_Update_Data", 0, "SENEC_API_GetData($this->InstanceID);");
 
             $this->RegisterVariableString("SENEC_Token", "Access Token");
             $this->RegisterVariableString("SENEC_ID", "Anlagen ID");
 
-            $this->RegisterTimer("SENEC_Update_Data", 60*1000, "SENEC_GetData($this->InstanceID);");
         }   
 		
 
@@ -42,7 +47,7 @@
         **/
 
         // -------------------------------------------------------------------------        
-        public function GetToken() {
+        public function API_GetToken() {
 
             define('USER_AGENT', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_1) AppleWebKit/537.36 (K HTML, like Gecko) Chrome/61.0.3163.100 Safari/537.36');
 
@@ -94,7 +99,7 @@
       	}
 
         // -------------------------------------------------------------------------        
-        public function GetID() {
+        public function API_GetID() {
 
             define('USER_AGENT', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_1) AppleWebKit/537.36 (K HTML, like Gecko) Chrome/61.0.3163.100 Safari/537.36');
 
@@ -137,7 +142,7 @@
         }
 
         // -------------------------------------------------------------------------        
-        public function GetData() {
+        public function API_GetData() {
 
             define('USER_AGENT', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_1) AppleWebKit/537.36 (K HTML, like Gecko) Chrome/61.0.3163.100 Safari/537.36');
 
@@ -275,7 +280,7 @@
         // -------------------------------------------------------------------------
         private function _SetAPIupdateInterval($minuten){
             $msec = $minuten > 0 ? $minuten * 60 * 1000 : 0;
-            $this->SetTimerInterval('SENEC_Update_Data', $msec);
+            $this->SetTimerInterval('SENEC_API_Update_Data', $msec);
         }
 
     }
