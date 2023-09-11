@@ -120,7 +120,6 @@
                 $id = json_decode($response, true)[0]['id'];
                 $this->SetValue("SENEC_ID", $id);
             }
-            $this->_setIPSvar($this->InstanceID, "test", 17);
             curl_close($curl);                                                              // cURL Session beenden
         }
 
@@ -162,7 +161,7 @@
                 $json = json_decode($response, true);
 
                 foreach ($json as $name => $value) {
-                    $this->_setIPSvar($SENEC_Vars, $name, $value);
+                    $this->_setIPSvar($this->InstanceID, $name, $value);
                 }
             }
             curl_close($curl);                                                              // cURL Session beenden
