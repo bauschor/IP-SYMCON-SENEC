@@ -15,8 +15,12 @@
             $this->RegisterPropertyString("SENEC_API_Anlagen_Stub", "anlagen");
             $this->RegisterPropertyString("SENEC_API_Data_Stub", "dashboard");
 
+            $this->RegisterPropertyInteger('Module_Update_interval', '60');
+
             $this->RegisterVariableString("SENEC_Token", "Access Token");
             $this->RegisterVariableString("SENEC_ID", "Anlagen ID");
+
+            $this->RegisterTimer('Module_Update_Data', 0, 'IPS_RequestAction(' . $this->InstanceID . ', "GetData", "");');
 
         }   
 		
@@ -152,7 +156,7 @@
             ];
             curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
         
-            $response = curl_exec($curl);                                                               // ok, jetzt ausführen
+            $response = curl_exec($curl);                                                       // ok, jetzt ausführen
 
             $curl_errno = curl_errno($curl);
 
@@ -166,6 +170,8 @@
                 }
             }
             curl_close($curl);                                                              // cURL Session beenden
+
+            $this->_SetUpdateInterval();
         }
 
 
@@ -251,5 +257,12 @@
             return 3;                   // string
         }        
 
+
+        private function _SetUpdateInterval(){
+            $min = $this->ReadPropertyInteger('Module_Update_interval');
+            $msec = $min > 0 ? $min * 60 * 1000 : 0;
+            $this->MaintainTimer('Module_Update_Data', $msec);
+        }
+    
     }
 ?>
