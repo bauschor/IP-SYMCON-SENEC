@@ -17,9 +17,9 @@
             "popup": {
                 "items": [
                     {
-                         "type": "SelectVariable",
-                         "name": "VariableActionTest",
-                         "caption": "Some Action Variable"
+                         "type": "Label",
+                         "name": "InfoPopup_Text",
+                         "caption": "Hi"
                     }
                 ]
             }

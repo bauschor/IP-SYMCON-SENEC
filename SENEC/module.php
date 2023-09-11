@@ -267,7 +267,7 @@
         // -------------------------------------------------------------------------
         private function _popupMessage($text){
 
-            $this->UpdateFormField('InfoPopup', 'caption', $text);
+            $this->UpdateFormField('InfoPopup_Text', 'caption', $text);
             $this->UpdateFormField('InfoPopup', 'visible', true);
         }
 
