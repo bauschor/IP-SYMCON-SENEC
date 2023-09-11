@@ -262,7 +262,7 @@
         private function _SetUpdateInterval(){
             $min = $this->ReadPropertyInteger('SENEC_Data_Update_Interval');
             $msec = $min > 0 ? $min * 60 * 1000 : 0;
-            $this->MaintainTimer('SENEC_Update_Data', $msec);
+            $this->SetTimerInterval('SENEC_Update_Data', $msec);
         }
 
     }
