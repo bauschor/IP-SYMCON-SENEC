@@ -90,7 +90,7 @@
             }
             curl_close($curl);                                                              // cURL Session beenden
 
-            $this->PopupMessage($msg);
+            $this->_popupMessage($msg);
       	}
 
         // -------------------------------------------------------------------------        
@@ -133,7 +133,7 @@
                 $msg = "Anlagen ID: ".$id;                
             }            
             curl_close($curl);                                                              // cURL Session beenden
-            $this->PopupMessage($msg);            
+            $this->_popupMessage($msg);            
         }
 
         // -------------------------------------------------------------------------        
@@ -172,7 +172,7 @@
             if ($curl_errno > 0) {
                 $curl_error = curl_error($curl);
                 $msg = "FEHLER: ".$curl_error;
-                $this->PopupMessage($msg);
+                $this->_popupMessage($msg);
                 $this->_SetAPIupdateInterval(0);                               
             } else {
                 $json = json_decode($response, true);
@@ -243,7 +243,6 @@
 
         // -------------------------------------------------------------------------
         private function _getIPStype($data){
-
             if (is_int($data)){
                 return 1;               // integer
             }
@@ -264,6 +263,14 @@
             }        
             return 3;                   // string
         }        
+
+        // -------------------------------------------------------------------------
+        private function _popupMessage($text){
+
+            $this->UpdateFormField('popup', 'caption', $text);
+            $this->UpdateFormField('popup', 'visible', true);
+        }
+
 
         // -------------------------------------------------------------------------
         private function _SetAPIupdateInterval($minuten){

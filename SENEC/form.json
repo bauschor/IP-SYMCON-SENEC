@@ -8,7 +8,22 @@
         { "type": "ValidationTextBox", "name": "SENEC_API_Login_Stub", "caption": "Login Stub" },
         { "type": "ValidationTextBox", "name": "SENEC_API_Anlagen_Stub", "caption": "Anlagen Stub" },
         { "type": "ValidationTextBox", "name": "SENEC_API_Data_Stub", "caption": "Data Stub" },
-        { "type": "NumberSpinner", "name": "SENEC_API_Data_Update_Interval", "caption": "Updatezyklus (Minuten)" }
+        { "type": "NumberSpinner", "name": "SENEC_API_Data_Update_Interval", "caption": "Updatezyklus (Minuten)" },
+
+        {
+            "type": "PopupAlert",
+            "popup": {
+                "items": [
+                    {
+                         "type": "SelectVariable",
+                         "name": "VariableActionTest",
+                         "caption": "Some Action Variable",
+                         "visible": "false"
+                    }
+                ]
+            }
+        }
+
     ],
     "actions":
     [
