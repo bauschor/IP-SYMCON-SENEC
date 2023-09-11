@@ -20,8 +20,8 @@
             $this->RegisterVariableString("SENEC_Token", "Access Token");
             $this->RegisterVariableString("SENEC_ID", "Anlagen ID");
 
-            $this->RegisterTimer('SENEC_Update_Data', 60*1000, 'RequestAction(' . $this->InstanceID . ', "GetData");');
-
+            $this->RegisterTimer("SENEC_Update_Data", 60*1000, "$this->GetData($this->InstanceID);");
+            // $this->RegisterTimer("SENEC_Update_Data", 60*1000, "RequestAction(".$this->InstanceID.", 'GetData');");
         }   
 		
 
