@@ -267,7 +267,7 @@
 
         // -------------------------------------------------------------------------
         private function _SetAPIupdateInterval($minuten){
-            $msec = $minunten > 0 ? $minunten * 60 * 1000 : 0;
+            $msec = $minuten > 0 ? $minuten * 60 * 1000 : 0;
             $this->SetTimerInterval('SENEC_Update_Data', $msec);
         }
 
