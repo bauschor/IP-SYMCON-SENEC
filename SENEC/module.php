@@ -20,7 +20,7 @@
             $this->RegisterVariableString("SENEC_Token", "Access Token");
             $this->RegisterVariableString("SENEC_ID", "Anlagen ID");
 
-            $this->RegisterTimer('SENEC_Update_Data', 60*1000, "SENEC_GetData();");
+            $this->RegisterTimer('SENEC_Update_Data', 60*1000, 'IPS_RequestAction(' . $this->InstanceID . ', "GetData", "");');
 
         }   
 		
@@ -33,6 +33,13 @@
             $this->_SetUpdateInterval();
         }
  
+        public function RequestAction($Ident, $Value) {
+            switch($Ident){
+            case "GetData":
+                $this->GetData();
+                break;                
+            }
+        }
 
         /**
         * Die folgenden Funktionen stehen automatisch zur Verfügung, wenn das Modul über die "Module Control" eingefügt wurden.
