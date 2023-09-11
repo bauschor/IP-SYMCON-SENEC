@@ -88,6 +88,7 @@
             if ($curl_errno > 0) {
                 $curl_error = curl_error($curl);
                 $msg = "FEHLER: ".$curl_error;
+                $this->_setIPSvar($this->InstanceID, "Fehler API_GetToken", $msg);
             } else {
                 $token = json_decode($response, true)['token'];
     			$this->SetValue("SENEC_Token", $token);
@@ -131,7 +132,8 @@
 
             if ($curl_errno > 0) {
                 $curl_error = curl_error($curl);
-                $msg = "FEHLER: ".$curl_error;                
+                $msg = "FEHLER: ".$curl_error;
+                $this->_setIPSvar($this->InstanceID, "Fehler API_GetID", $msg);                           
             } else {
                 $id = json_decode($response, true)[0]['id'];
                 $this->SetValue("SENEC_ID", $id);
@@ -177,6 +179,7 @@
             if ($curl_errno > 0) {
                 $curl_error = curl_error($curl);
                 $msg = "FEHLER: ".$curl_error;
+                $this->_setIPSvar($this->InstanceID, "Fehler API_GetData", $msg);                
                 $this->_popupMessage($msg);
                 $this->_SetAPIupdateInterval(0);                               
             } else {
