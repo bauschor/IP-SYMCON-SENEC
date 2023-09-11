@@ -20,7 +20,7 @@
             $this->RegisterVariableString("SENEC_Token", "Access Token");
             $this->RegisterVariableString("SENEC_ID", "Anlagen ID");
 
-            $this->RegisterTimer('Module_Update_Data', 0, 'IPS_RequestAction(' . $this->InstanceID . ', "GetData", "");');
+//            $this->RegisterTimer('Module_Update_Data', 0, 'IPS_RequestAction(' . $this->InstanceID . ', "GetData", "");');
 
         }   
 		
@@ -171,7 +171,7 @@
             }
             curl_close($curl);                                                              // cURL Session beenden
 
-            $this->_SetUpdateInterval();
+//            $this->_SetUpdateInterval();
         }
 
 
