@@ -128,14 +128,15 @@
 
             define('USER_AGENT', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_1) AppleWebKit/537.36 (K HTML, like Gecko) Chrome/61.0.3163.100 Safari/537.36');
 
-            $baseurl    = $this->ReadPropertyString("SENEC_API_Base_Url");
-            $datastub   = $this->ReadPropertyString("SENEC_API_Anlagen_Stub");
-            $token      = $this->GetValue("SENEC_Token");
-            $id         = $this->GetValue("SENEC_ID",);
+            $baseurl        = $this->ReadPropertyString("SENEC_API_Base_Url");
+            $anlagenstub    = $this->ReadPropertyString("SENEC_API_Anlagen_Stub");
+            $datastub       = $this->ReadPropertyString("SENEC_API_Data_Stub");
+            $token          = $this->GetValue("SENEC_Token");
+            $id             = $this->GetValue("SENEC_ID",);
             
             $curl = curl_init();                                                                // los geht's
 
-            curl_setopt($curl, CURLOPT_URL, $baseurl."/".$anlagenstub."/".$id."/".datastub);    // URL zu den Daten
+            curl_setopt($curl, CURLOPT_URL, $baseurl."/".$anlagenstub."/".$id."/".$datastub);    // URL zu den Daten
             curl_setopt($curl, CURLOPT_POST, false);                                            // Diesesmal kein POST request
 
             curl_setopt($curl, CURLOPT_USERAGENT, USER_AGENT);                                  // Hilft bei einer eventuellen Sessionvalidation auf Serverseite
