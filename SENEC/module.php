@@ -15,7 +15,7 @@
             $this->RegisterPropertyString("SENEC_API_Anlagen_Stub", "anlagen");
             $this->RegisterPropertyString("SENEC_API_Data_Stub", "dashboard");
 
-            // $this->RegisterPropertyInteger("SENEC_Data_Update_Interval", 6);
+            $this->RegisterPropertyString("SENEC_Data_Update_Interval", "6");
 
             $this->RegisterVariableString("SENEC_Token", "Access Token");
             $this->RegisterVariableString("SENEC_ID", "Anlagen ID");
