@@ -20,7 +20,7 @@
             $this->RegisterVariableString("SENEC_Token", "Access Token");
             $this->RegisterVariableString("SENEC_ID", "Anlagen ID");
 
-            $this->RegisterTimer('SENEC_Update_Data', 0, 'IPS_RequestAction(' . $this->InstanceID . ', "GetData", "");');
+            $this->RegisterTimer('SENEC_Update_Data', 60*1000, 'IPS_RequestAction(' . $this->InstanceID . ', "GetData", "");');
 
         }   
 		
@@ -184,8 +184,6 @@
         **/
 
         // -----------------------------------------------------
-        // Variablen anlegen und/oder aktualisieren
-        // -----------------------------------------------------
         private function _setIPSvar($parentID, $name, $value){
 
             $ident = str_replace(array("-", "/"), "_", $name);
@@ -259,6 +257,7 @@
             return 3;                   // string
         }        
 
+        // -------------------------------------------------------------------------
         private function _SetUpdateInterval(){
             $min = $this->ReadPropertyInteger('SENEC_Data_Update_Interval');
             $msec = $min > 0 ? $min * 60 * 1000 : 0;
