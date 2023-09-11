@@ -12,13 +12,14 @@
 
         {
             "type": "PopupAlert",
+            "name": "Info",
+            "visible": false,
             "popup": {
                 "items": [
                     {
                          "type": "SelectVariable",
                          "name": "VariableActionTest",
-                         "caption": "Some Action Variable",
-                         "visible": false
+                         "caption": "Some Action Variable"
                     }
                 ]
             }
