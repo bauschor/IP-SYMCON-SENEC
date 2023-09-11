@@ -12,7 +12,7 @@
     "actions":
     [
         { "type": "Button", "label": "GetToken", "onClick": "SENEC_GetToken($id);" },
-        { "type": "Button", "label": "GetAnlagenID", "onClick": "SENEC_GetID($id);" }
+        { "type": "Button", "label": "GetAnlagenID", "onClick": "SENEC_GetID($id);" },
         { "type": "Button", "label": "GetData", "onClick": "SENEC_GetData($id);" }
     ]
 }
