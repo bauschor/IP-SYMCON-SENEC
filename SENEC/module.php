@@ -15,7 +15,7 @@
             $this->RegisterPropertyString("SENEC_API_Anlagen_Stub", "anlagen");
 
             $this->RegisterVariableString("SENEC_Token", "Access Token");
-            $this->RegisterVariableString("SENEC_ID", "Access Token");
+            $this->RegisterVariableString("SENEC_ID", "Anlagen ID");
 
         }   
 		
