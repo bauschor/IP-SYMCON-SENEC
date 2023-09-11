@@ -178,7 +178,7 @@
         // -----------------------------------------------------
         // Variablen anlegen und/oder aktualisieren
         // -----------------------------------------------------
-        private function $this->_setIPSvar($parentID, $name, $value){
+        private function _setIPSvar($parentID, $name, $value){
 
             $ident = str_replace(array("-", "/"), "_", $name);
             $ips_type = _getIPStype($value);
