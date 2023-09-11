@@ -15,7 +15,7 @@
             $this->RegisterPropertyString("SENEC_API_Anlagen_Stub", "anlagen");
             $this->RegisterPropertyString("SENEC_API_Data_Stub", "dashboard");
 
-            $this->RegisterPropertyInteger('Module_Update_interval', '60');
+            $this->RegisterPropertyInteger("Module_Update_interval", 60);
 
             $this->RegisterVariableString("SENEC_Token", "Access Token");
             $this->RegisterVariableString("SENEC_ID", "Anlagen ID");
@@ -257,12 +257,13 @@
             return 3;                   // string
         }        
 
-
+/*
         private function _SetUpdateInterval(){
             $min = $this->ReadPropertyInteger('Module_Update_interval');
             $msec = $min > 0 ? $min * 60 * 1000 : 0;
             $this->MaintainTimer('Module_Update_Data', $msec);
         }
-    
+  */
+
     }
 ?>
