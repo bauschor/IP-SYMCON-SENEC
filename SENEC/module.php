@@ -120,7 +120,7 @@
                 $id = json_decode($response, true)[0]['id'];
                 $this->SetValue("SENEC_ID", $id);
             }
-            _setIPSvar($IPS_SELF, "test", 17);
+            $this->_setIPSvar($IPS_SELF, "test", 17);
             curl_close($curl);                                                              // cURL Session beenden
         }
 
@@ -162,7 +162,7 @@
                 $json = json_decode($response, true);
 
                 foreach ($json as $name => $value) {
-                    _setIPSvar($SENEC_Vars, $name, $value);
+                    $this->_setIPSvar($SENEC_Vars, $name, $value);
                 }
             }
             curl_close($curl);                                                              // cURL Session beenden
@@ -178,7 +178,7 @@
         // -----------------------------------------------------
         // Variablen anlegen und/oder aktualisieren
         // -----------------------------------------------------
-        private function _setIPSvar($parentID, $name, $value){
+        private function $this->_setIPSvar($parentID, $name, $value){
 
             $ident = str_replace(array("-", "/"), "_", $name);
             $ips_type = _getIPStype($value);
@@ -196,7 +196,7 @@
                     IPS_SetIdent($CatID, $ident);
                 }
                 foreach ($value as $Aname => $Avalue) {
-                    _setIPSvar($CatID, $Aname, $Avalue);       // ab in die Rekursion
+                    $this->_setIPSvar($CatID, $Aname, $Avalue);       // ab in die Rekursion
                 }
                 break;
 
@@ -204,7 +204,7 @@
                 echo "\n\n".$name." is an object\n";  
         /*
                 foreach ($value as $Oname => $Ovalue) {
-                    _setIPSvar($CatID, $Oname, $Ovalue);
+                    $this->_setIPSvar($CatID, $Oname, $Ovalue);
                 }
         */
                 break;
