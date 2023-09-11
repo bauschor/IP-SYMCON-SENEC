@@ -15,13 +15,12 @@
             $this->RegisterPropertyString("SENEC_API_Anlagen_Stub", "anlagen");
             $this->RegisterPropertyString("SENEC_API_Data_Stub", "dashboard");
 
-            $this->RegisterPropertyInteger("SENEC_Data_Update_Interval", 6);
+            $this->RegisterPropertyInteger("SENEC_API_Data_Update_Interval", 6);
 
             $this->RegisterVariableString("SENEC_Token", "Access Token");
             $this->RegisterVariableString("SENEC_ID", "Anlagen ID");
 
             $this->RegisterTimer("SENEC_Update_Data", 60*1000, "SENEC_GetData($this->InstanceID);");
-            // $this->RegisterTimer("SENEC_Update_Data", 60*1000, "RequestAction(".$this->InstanceID.", 'GetData');");
         }   
 		
 
@@ -30,17 +29,11 @@
             // Diese Zeile nicht löschen
             parent::ApplyChanges();
 
-            $this->_SetUpdateInterval();
+            $minuten = $this->ReadPropertyInteger('SENEC_API_Data_Update_Interval');
+            $this->_SetAPIupdateInterval($minuten);
         }
- /*
-        public function RequestAction($Ident, $Value) {
-            switch($Ident){
-            case "GetData":
-                $this->GetData();
-                break;                
-            }
-        }
-*/
+ 
+ 
         /**
         * Die folgenden Funktionen stehen automatisch zur Verfügung, wenn das Modul über die "Module Control" eingefügt wurden.
         * Die Funktionen werden, mit dem selbst eingerichteten Prefix, in PHP und JSON-RPC wiefolgt zur Verfügung gestellt:
@@ -89,11 +82,15 @@
 
             if ($curl_errno > 0) {
                 $curl_error = curl_error($curl);
+                $msg = "FEHLER: ".$curl_error;
             } else {
                 $token = json_decode($response, true)['token'];
     			$this->SetValue("SENEC_Token", $token);
+                $msg = "Token erhalten: ".$token;
             }
             curl_close($curl);                                                              // cURL Session beenden
+
+            $this->PopupMessage($msg);
       	}
 
         // -------------------------------------------------------------------------        
@@ -123,17 +120,20 @@
             ];
             curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
         
-            $response = curl_exec($curl);                                                               // ok, jetzt ausführen
+            $response = curl_exec($curl);                                                   // ok, jetzt ausführen
 
             $curl_errno = curl_errno($curl);
 
             if ($curl_errno > 0) {
                 $curl_error = curl_error($curl);
+                $msg = "FEHLER: ".$curl_error;                
             } else {
                 $id = json_decode($response, true)[0]['id'];
                 $this->SetValue("SENEC_ID", $id);
-            }
+                $msg = "Anlagen ID: ".$id;                
+            }            
             curl_close($curl);                                                              // cURL Session beenden
+            $this->PopupMessage($msg);            
         }
 
         // -------------------------------------------------------------------------        
@@ -149,7 +149,7 @@
             
             $curl = curl_init();                                                                // los geht's
 
-            curl_setopt($curl, CURLOPT_URL, $baseurl."/".$anlagenstub."/".$id."/".$datastub);    // URL zu den Daten
+            curl_setopt($curl, CURLOPT_URL, $baseurl."/".$anlagenstub."/".$id."/".$datastub);   // URL zu den Daten
             curl_setopt($curl, CURLOPT_POST, false);                                            // Diesesmal kein POST request
 
             curl_setopt($curl, CURLOPT_USERAGENT, USER_AGENT);                                  // Hilft bei einer eventuellen Sessionvalidation auf Serverseite
@@ -171,6 +171,9 @@
 
             if ($curl_errno > 0) {
                 $curl_error = curl_error($curl);
+                $msg = "FEHLER: ".$curl_error;
+                $this->PopupMessage($msg);
+                $this->_SetAPIupdateInterval(0);                               
             } else {
                 $json = json_decode($response, true);
 
@@ -179,8 +182,6 @@
                 }
             }
             curl_close($curl);                                                              // cURL Session beenden
-
-            $this->_SetUpdateInterval();
         }
 
 
@@ -265,9 +266,8 @@
         }        
 
         // -------------------------------------------------------------------------
-        private function _SetUpdateInterval(){
-            $min = $this->ReadPropertyInteger('SENEC_Data_Update_Interval');
-            $msec = $min > 0 ? $min * 60 * 1000 : 0;
+        private function _SetAPIupdateInterval($minuten){
+            $msec = $minunten > 0 ? $minunten * 60 * 1000 : 0;
             $this->SetTimerInterval('SENEC_Update_Data', $msec);
         }
 
