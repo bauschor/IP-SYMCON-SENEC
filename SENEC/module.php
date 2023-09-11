@@ -120,7 +120,7 @@
                 $id = json_decode($response, true)[0]['id'];
                 $this->SetValue("SENEC_ID", $id);
             }
-            $this->_setIPSvar($IPS_SELF, "test", 17);
+            $this->_setIPSvar($this->InstanceID, "test", 17);
             curl_close($curl);                                                              // cURL Session beenden
         }
 
