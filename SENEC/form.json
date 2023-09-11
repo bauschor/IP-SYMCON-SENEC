@@ -12,7 +12,7 @@
 
         {
             "type": "PopupAlert",
-            "name": "Info",
+            "name": "InfoPopup",
             "visible": false,
             "popup": {
                 "items": [
