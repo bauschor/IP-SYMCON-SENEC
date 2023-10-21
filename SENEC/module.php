@@ -347,7 +347,7 @@
 
                 $data = substr(strrchr($value, "_"), 1);
                 $type = strstr($value, "_", true);
-                $ips_type = _transformSENECtoIPStype($type);
+                $ips_type = $this->_transformSENECtoIPStype($type);
 
                 $var_id = @IPS_GetObjectIDByIdent($ident, $parentID);
 
