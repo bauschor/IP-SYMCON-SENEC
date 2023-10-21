@@ -25,6 +25,7 @@
             $this->RegisterPropertyString("SENEC_API_Data_Stub", "dashboard");
 
             $this->RegisterPropertyInteger("SENEC_API_Data_Update_Interval", 6);
+            $this->RegisterTimer("SENEC_API_Update_Data", 0, "SENEC_API_GetData($this->InstanceID);");
 
             $this->RegisterVariableString("SENEC_API_Token", "Access Token");
             $this->RegisterVariableString("SENEC_API_ID", "Anlagen ID");
@@ -33,6 +34,7 @@
             $this->RegisterPropertyString("SENEC_Local_IP", "");
             $this->RegisterPropertyString('SENEC_Local_Query', '{"ENERGY":{"GUI_BAT_DATA_FUEL_CHARGE":"","STAT_STATE":"","GUI_BAT_DATA_POWER":"","GUI_INVERTER_POWER":"","GUI_HOUSE_POW":"","GUI_GRID_POW":""},"PM1OBJ1":{}}');
             $this->RegisterPropertyInteger("SENEC_Local_Data_Update_Interval", 10);
+            $this->RegisterTimer("SENEC_Local_Update_Data", 0, "SENEC_LOCAL_GetData($this->InstanceID);");
         }   
 		
 
@@ -41,11 +43,9 @@
             // Diese Zeile nicht löschen
             parent::ApplyChanges();
 
-            $this->RegisterTimer("SENEC_API_Update_Data", 0, "SENEC_API_GetData($this->InstanceID);");
             $minuten = $this->ReadPropertyInteger('SENEC_API_Data_Update_Interval');
             $this->_SetAPIupdateInterval($minuten);
 
-            $this->RegisterTimer("SENEC_Local_Update_Data", 0, "SENEC_LOCAL_GetData($this->InstanceID);");
             $sekunden = $this->ReadPropertyInteger('SENEC_Local_Data_Update_Interval');
             $this->_SetLALAupdateInterval($sekunden);
         }
@@ -53,7 +53,7 @@
  
         /**
         * Die folgenden Funktionen stehen automatisch zur Verfügung, wenn das Modul über die "Module Control" eingefügt wurden.
-        * Die Funktionen werden, mit dem selbst eingerichteten Prefix, in PHP und JSON-RPC wie folgt zur Verfügung gestellt:
+        * Die Funktionen werden, mit dem Prefix 'SENEC', in PHP und JSON-RPC wie folgt zur Verfügung gestellt:
         *
         * SENEC_API_GetToken();
         * SENEC_API_GetID();
@@ -64,7 +64,8 @@
         // -------------------------------------------------------------------------        
         public function API_GetToken() {
 
-            define('USER_AGENT', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_1) AppleWebKit/537.36 (K HTML, like Gecko) Chrome/61.0.3163.100 Safari/537.36');
+            // define('USER_AGENT', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_1) AppleWebKit/537.36 (K HTML, like Gecko) Chrome/61.0.3163.100 Safari/537.36');
+            $user_agent     = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_1) AppleWebKit/537.36 (K HTML, like Gecko) Chrome/61.0.3163.100 Safari/537.36';
 
             $baseurl    = $this->ReadPropertyString("SENEC_API_Base_Url");
             $loginstub  = $this->ReadPropertyString("SENEC_API_Login_Stub");
@@ -82,7 +83,7 @@
             curl_setopt($curl, CURLOPT_POST, true);                                         // Ein POST request soll es werden
             curl_setopt($curl, CURLOPT_POSTFIELDS, $credentials);                           // Die Infos als JSON Body schicken
             
-            curl_setopt($curl, CURLOPT_USERAGENT, USER_AGENT);                              // Hilft bei einer eventuellen Sessionvalidation auf Serverseite
+            curl_setopt($curl, CURLOPT_USERAGENT, $user_agent);                             // Hilft bei einer eventuellen Sessionvalidation auf Serverseite
             curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, 0);                                  // keine Prüfung ob Hostname im Zertifikat
             curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);                              // keine Überprüfung des Peerzertifikats
             curl_setopt($curl, CURLOPT_FOLLOWLOCATION, false);                              // redirects nicht folgen
@@ -119,7 +120,8 @@
         // -------------------------------------------------------------------------        
         public function API_GetID() {
 
-            define('USER_AGENT', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_1) AppleWebKit/537.36 (K HTML, like Gecko) Chrome/61.0.3163.100 Safari/537.36');
+            // define('USER_AGENT', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_1) AppleWebKit/537.36 (K HTML, like Gecko) Chrome/61.0.3163.100 Safari/537.36');
+            $user_agent     = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_1) AppleWebKit/537.36 (K HTML, like Gecko) Chrome/61.0.3163.100 Safari/537.36';
 
             $baseurl        = $this->ReadPropertyString("SENEC_API_Base_Url");
             $anlagenstub    = $this->ReadPropertyString("SENEC_API_Anlagen_Stub");
@@ -130,7 +132,7 @@
             curl_setopt($curl, CURLOPT_URL, $baseurl."/".$anlagenstub);                     // URL zu den Anlageninfos
             curl_setopt($curl, CURLOPT_POST, false);                                        // Diesesmal kein POST request
 
-            curl_setopt($curl, CURLOPT_USERAGENT, USER_AGENT);                              // Hilft bei einer eventuellen Sessionvalidation auf Serverseite
+            curl_setopt($curl, CURLOPT_USERAGENT, $user_agent);                             // Hilft bei einer eventuellen Sessionvalidation auf Serverseite
             curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, 0);                                  // keine Prüfung ob Hostname im Zertifikat
             curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);                              // keine Überprüfung des Peerzertifikats
             curl_setopt($curl, CURLOPT_FOLLOWLOCATION, false);                              // redirects nicht folgen
@@ -165,7 +167,8 @@
         // -------------------------------------------------------------------------        
         public function API_GetData() {
 
-            define('USER_AGENT', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_1) AppleWebKit/537.36 (K HTML, like Gecko) Chrome/61.0.3163.100 Safari/537.36');
+            // define('USER_AGENT', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_1) AppleWebKit/537.36 (K HTML, like Gecko) Chrome/61.0.3163.100 Safari/537.36');
+            $user_agent     = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_1) AppleWebKit/537.36 (K HTML, like Gecko) Chrome/61.0.3163.100 Safari/537.36';
 
             $baseurl        = $this->ReadPropertyString("SENEC_API_Base_Url");
             $anlagenstub    = $this->ReadPropertyString("SENEC_API_Anlagen_Stub");
@@ -181,7 +184,7 @@
             curl_setopt($curl, CURLOPT_URL, $baseurl."/".$anlagenstub."/".$id."/".$datastub);   // URL zu den Daten
             curl_setopt($curl, CURLOPT_POST, false);                                            // Diesesmal kein POST request
 
-            curl_setopt($curl, CURLOPT_USERAGENT, USER_AGENT);                                  // Hilft bei einer eventuellen Sessionvalidation auf Serverseite
+            curl_setopt($curl, CURLOPT_USERAGENT, $user_agent);                                 // Hilft bei einer eventuellen Sessionvalidation auf Serverseite
             curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, 0);                                      // keine Prüfung ob Hostname im Zertifikat
             curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);                                  // keine Überprüfung des Peerzertifikats
             curl_setopt($curl, CURLOPT_FOLLOWLOCATION, false);                                  // redirects nicht folgen
