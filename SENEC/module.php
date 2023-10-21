@@ -196,7 +196,6 @@
                 $json = json_decode($response, true);
 
                 foreach ($json as $name => $value) {
-                    // $this->_setIPSvar($this->InstanceID, $name, $value);
                     $this->_setIPSvar($vars_api, $name, $value);                    
                 }
                 $this->_setIPSvar($this->InstanceID, "API_GetData Status", "OK");                                
@@ -234,12 +233,11 @@
                 $msg = "FEHLER: ".$curl_error;
                 $this->_setIPSvar($this->InstanceID, "LOCAL_GetData Status", $msg);                
                 $this->_popupMessage($msg);
-                $this->_SetAPIupdateInterval(0);        
+                $this->_SetLALAupdateInterval(0);        
             }else{
                 $json = json_decode($response, true);                               // Dekodieren der Antwort
         
                 foreach ($json as $name => $value) {
-                    // $this->_setIPSvarLALA($this->InstanceID, $name, $value);
                     $this->_setIPSvarLALA($vars_lala, $name, $value);                    
                 }
                 $this->_setIPSvar($this->InstanceID, "LOCAL_GetData Status", "OK");                                
@@ -380,13 +378,10 @@
                     case 'VARIABLE':            
                         $ips_type = 3;              // string                         
                         break;       
-                    default:
-            //          echo "Unbekannter Datentyp: ".$type." (".$name." -> ".$value.") - (".$parent." - ".$ident.")\n";                
+                    default:                        // unknown
                         $ips_type = 3;              // string
                         break;
                 }
-
-                
 
                 $var_id = @IPS_GetObjectIDByIdent($ident, $parentID);
 
@@ -425,39 +420,6 @@
             }        
             return 3;                   // string
         }        
-
-        // -------------------------------------------------------------------------
-        private function _transformSENECtoIPStype($type){
-
-            switch ($type){
-                case 'fl':
-                    $value = "".$value;
-                    $value = _hex2float($value);
-                    $value = round($value, 2);                  
-                    $ips_type = 2;              // float                  
-                    break;
-                case 'u1':
-                case 'u3':
-                case 'u6':            
-                case 'u8':
-                case 'i1':  
-                case 'i3':
-                case 'i8':            
-                    $value = _hex2int($value);
-                    $ips_type = 1;              // integer           
-                    break;
-                case 'st':
-                case 'VARIABLE':            
-                    $ips_type = 3;              // string                         
-                    break;       
-                default:
-        //          echo "Unbekannter Datentyp: ".$type." (".$name." -> ".$value.") - (".$parent." - ".$ident.")\n";                
-                    $ips_type = 3;              // string
-                    break;
-            }
-
-            return($ips_type);
-        }
 
         // --------------------------------------------------
         private function _hex2float($num) {

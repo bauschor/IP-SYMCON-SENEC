@@ -12,7 +12,7 @@
 
 
         { "type": "ValidationTextBox", "name": "SENEC_Local_IP", "caption": "IP-Adresse des SENEC Moduls" },
-        { "type": "ValidationTextBox", "name": "SENEC_Local_Query", "caption": "JSON-Request", "width": "500px" },        
+        { "type": "ValidationTextBox", "name": "SENEC_Local_Query", "caption": "JSON-Request", "width": "900px" , "multiline": "true"},        
         { "type": "NumberSpinner", "name": "SENEC_Local_Data_Update_Interval", "caption": "lokaler Updatezyklus (Sekunden)" },
 
 
