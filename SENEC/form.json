@@ -12,6 +12,7 @@
 
 
         { "type": "ValidationTextBox", "name": "SENEC_Local_IP", "caption": "IP-Adresse des SENEC Moduls" },
+        { "type": "ValidationTextBox", "name": "SENEC_Local_Query", "caption": "JSON-Request", "width": "500px" },        
         { "type": "NumberSpinner", "name": "SENEC_Local_Data_Update_Interval", "caption": "lokaler Updatezyklus (Sekunden)" },
 
 
@@ -27,6 +28,8 @@
     [
         { "type": "Button", "label": "GetToken", "onClick": "SENEC_API_GetToken($id);" },
         { "type": "Button", "label": "GetAnlagenID", "onClick": "SENEC_API_GetID($id);" },
-        { "type": "Button", "label": "GetData", "onClick": "SENEC_API_GetData($id);" }
+        { "type": "Button", "label": "GetData (API)", "onClick": "SENEC_API_GetData($id);" },
+        { "type": "Button", "label": "GetData (local)", "onClick": "SENEC_LOCAL_GetData($id);" }
+
     ]
 }
