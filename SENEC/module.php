@@ -347,7 +347,36 @@
 
                 $data = substr(strrchr($value, "_"), 1);
                 $type = strstr($value, "_", true);
-                $ips_type = $this->_transformSENECtoIPStype($type);
+                // $ips_type = $this->_transformSENECtoIPStype($type);
+
+                switch ($type){
+                    case 'fl':
+                        $data = "".$data;
+                        $data = _hex2float($data);
+                        $data = round($data, 2);                  
+                        $ips_type = 2;              // float                  
+                        break;
+                    case 'u1':
+                    case 'u3':
+                    case 'u6':            
+                    case 'u8':
+                    case 'i1':  
+                    case 'i3':
+                    case 'i8':            
+                        $data = _hex2int($data);
+                        $ips_type = 1;              // integer           
+                        break;
+                    case 'st':
+                    case 'VARIABLE':            
+                        $ips_type = 3;              // string                         
+                        break;       
+                    default:
+            //          echo "Unbekannter Datentyp: ".$type." (".$name." -> ".$value.") - (".$parent." - ".$ident.")\n";                
+                        $ips_type = 3;              // string
+                        break;
+                }
+
+                
 
                 $var_id = @IPS_GetObjectIDByIdent($ident, $parentID);
 
