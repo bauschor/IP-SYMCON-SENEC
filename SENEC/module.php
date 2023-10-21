@@ -58,13 +58,13 @@
         * SENEC_API_GetToken();
         * SENEC_API_GetID();
         * SENEC_API_GetData();
+        * SENEC_API_FullCycle();
         * SENEC_LOCAL_GetData();
         **/
 
         // -------------------------------------------------------------------------        
         public function API_GetToken() {
 
-            // define('USER_AGENT', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_1) AppleWebKit/537.36 (K HTML, like Gecko) Chrome/61.0.3163.100 Safari/537.36');
             $user_agent     = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_1) AppleWebKit/537.36 (K HTML, like Gecko) Chrome/61.0.3163.100 Safari/537.36';
 
             $baseurl    = $this->ReadPropertyString("SENEC_API_Base_Url");
@@ -119,7 +119,6 @@
         // -------------------------------------------------------------------------        
         public function API_GetID() {
 
-            // define('USER_AGENT', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_1) AppleWebKit/537.36 (K HTML, like Gecko) Chrome/61.0.3163.100 Safari/537.36');
             $user_agent     = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_1) AppleWebKit/537.36 (K HTML, like Gecko) Chrome/61.0.3163.100 Safari/537.36';
 
             $baseurl        = $this->ReadPropertyString("SENEC_API_Base_Url");
@@ -161,13 +160,12 @@
             curl_close($curl);                                                              // cURL Session beenden
             $this->_popupMessage($msg);
             
-            return $curl_errno
+            return $curl_errno;
         }
 
         // -------------------------------------------------------------------------        
         public function API_GetData() {
 
-            // define('USER_AGENT', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_1) AppleWebKit/537.36 (K HTML, like Gecko) Chrome/61.0.3163.100 Safari/537.36');
             $user_agent     = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_1) AppleWebKit/537.36 (K HTML, like Gecko) Chrome/61.0.3163.100 Safari/537.36';
 
             $baseurl        = $this->ReadPropertyString("SENEC_API_Base_Url");
