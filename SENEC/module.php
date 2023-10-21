@@ -21,10 +21,17 @@
             $this->RegisterVariableString("SENEC_API_Token", "Access Token");
             $this->RegisterVariableString("SENEC_API_ID", "Anlagen ID");
 
+            $vars_api = $this->_createIPScategory($this->InstanceID, "Vars (API)");
+            $this->RegisterPropertyInteger("SENEC_API_Vars", $vars_api);
+
+
             $this->RegisterPropertyString("SENEC_Local_IP", "");
-            $this->RegisterPropertyString('SENEC_Local_Query', '{"ENERGY":{"GUI_BAT_DATA_FUEL_CHARGE":"","STAT_STATE":"","GUI_BAT_DATA_POWER":"","GUI_INVERTER_POWER":"","GUI_HOUSE_POW":"","GUI_GRID_POW":""},"PM1OBJ1":{},"STATISTIC":{}}');
+            $this->RegisterPropertyString('SENEC_Local_Query', '{"ENERGY":{"GUI_BAT_DATA_FUEL_CHARGE":"","STAT_STATE":"","GUI_BAT_DATA_POWER":"","GUI_INVERTER_POWER":"","GUI_HOUSE_POW":"","GUI_GRID_POW":""},"PM1OBJ1":{}}');
             $this->RegisterPropertyInteger("SENEC_Local_Data_Update_Interval", 10);
             $this->RegisterTimer("SENEC_Local_Update_Data", 0, "SENEC_LOCAL_GetData($this->InstanceID);");
+
+            $vars_lala = $this->_createIPScategory($this->InstanceID, "Vars (LOCAL)");
+            $this->RegisterPropertyInteger("SENEC_LOCAL_Vars", $vars_lala);
 
         }   
 		
@@ -39,9 +46,6 @@
 
             $sekunden = $this->ReadPropertyInteger('SENEC_Local_Data_Update_Interval');
             $this->_SetLALAupdateInterval($sekunden);
-
-            $this->_createIPScategory($this->InstanceID, "Vars (API)");
-            $this->_createIPScategory($this->InstanceID, "Vars (LOCAL)");
         }
  
  
@@ -208,6 +212,8 @@
             $requestarray = $this->ReadPropertyString('SENEC_Local_Query');
             $timeout = 15;
 
+            $lala_vars = $this->GetValue("SENEC_LOCAL_Vars",);
+
             $curl = curl_init();
 
             curl_setopt($curl, CURLOPT_URL, "https://".$ip."/lala.cgi");
@@ -233,7 +239,8 @@
                 $json = json_decode($response, true);                               // Dekodieren der Antwort
         
                 foreach ($json as $name => $value) {
-                    $this->_setIPSvarLALA($this->InstanceID, $name, $value);
+                    // $this->_setIPSvarLALA($this->InstanceID, $name, $value);
+                    $this->_setIPSvarLALA($lala_vars, $name, $value);                    
                 }
             }
 
