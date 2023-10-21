@@ -207,7 +207,7 @@
             $ip = $this->ReadPropertyString('SENEC_Local_IP');
             $requestarray = $this->ReadPropertyString('SENEC_Local_Query');
             $timeout = 15;
-            
+
             $curl = curl_init();
 
             curl_setopt($curl, CURLOPT_URL, "https://".$ip."/lala.cgi");
@@ -345,8 +345,8 @@
                 
                 $ident = str_replace(array("-", "/", ":", "."), "_", $name);
 
-                $value = substr(strrchr($data, "_"), 1);
-                $type = strstr($data, "_", true);
+                $data = substr(strrchr($value, "_"), 1);
+                $type = strstr($value, "_", true);
                 $ips_type = _transformSENECtoIPStype($type);
 
                 $var_id = @IPS_GetObjectIDByIdent($ident, $parentID);
@@ -358,7 +358,7 @@
                     IPS_SetIdent($var_id, $ident);              // jetzt erst ident setzen, weil der pro zweig eindeutig sein muss
                 }
 
-                SetValue($var_id, $value);                
+                SetValue($var_id, $data);                
                 break;
             }
         }
