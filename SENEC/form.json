@@ -28,8 +28,8 @@
     [
         { "type": "Button", "label": "API-Token holen", "onClick": "SENEC_API_GetToken($id);" },
         { "type": "Button", "label": "Anlagen-ID abfragen", "onClick": "SENEC_API_GetID($id);" },
-        { "type": "Button", "label": "Daten per API holen", "onClick": "SENEC_API_GetData($id);" },
-        { "type": "Button", "label": "Daten lokal vom Speicher einlesen", "onClick": "SENEC_LOCAL_GetData($id);" }
+        { "type": "Button", "label": "Daten per SENEC API holen", "onClick": "SENEC_API_GetData($id);" },
+        { "type": "Button", "label": "Daten lokal vom SENEC Gerät einlesen", "onClick": "SENEC_LOCAL_GetData($id);" }
 
     ]
 }
