@@ -242,7 +242,7 @@
         // -----------------------------------------------------
         private function _createIPScategory($parentID, $name){
 
-            $ident = str_replace(array("-", "/"), "_", $name);
+            $ident = str_replace(array("-", "/", ":", ".", " "), "_", $name);
             $CatID = @IPS_GetObjectIDByIdent($ident, $parentID);
 
             if ($CatID === false){
