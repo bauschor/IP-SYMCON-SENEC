@@ -16,7 +16,7 @@
             $this->RegisterPropertyString("SENEC_API_Data_Stub", "dashboard");
 
             $this->RegisterPropertyInteger("SENEC_API_Data_Update_Interval", 6);
-            $this->RegisterTimer("SENEC_API_Update_Data", 60*1000, "SENEC_API_GetData($this->InstanceID);");
+            $this->RegisterTimer("SENEC_API_Update_Data", 0, "SENEC_API_GetData($this->InstanceID);");
 
             $this->RegisterVariableString("SENEC_API_Token", "Access Token");
             $this->RegisterVariableString("SENEC_API_ID", "Anlagen ID");
@@ -212,7 +212,7 @@
             $requestarray = $this->ReadPropertyString('SENEC_Local_Query');
             $timeout = 15;
 
-            $lala_vars = $this->GetValue("SENEC_LOCAL_Vars",);
+            $lala_vars = $this->ReadPropertyInteger("SENEC_LOCAL_Vars");
 
             $curl = curl_init();
 
