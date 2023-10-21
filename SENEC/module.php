@@ -352,7 +352,7 @@
                 switch ($type){
                     case 'fl':
                         $data = "".$data;
-                        $data = _hex2float($data);
+                        $data = $this->_hex2float($data);
                         $data = round($data, 2);                  
                         $ips_type = 2;              // float                  
                         break;
@@ -363,7 +363,7 @@
                     case 'i1':  
                     case 'i3':
                     case 'i8':            
-                        $data = _hex2int($data);
+                        $data = $this->_hex2int($data);
                         $ips_type = 1;              // integer           
                         break;
                     case 'st':
