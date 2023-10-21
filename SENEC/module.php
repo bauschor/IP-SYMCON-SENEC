@@ -429,12 +429,12 @@
                 $significand += (1 / pow(2,$i)) * $mantissa[$i];
             }
             return $significand * pow(2, $exp) * ($sign*-2+1);
-        };
+        }
 
         // --------------------------------------------------
         private function _hex2int($num){
             return hexdec($num);
-        };
+        }
  
         // -------------------------------------------------------------------------
         private function _popupMessage($text){
