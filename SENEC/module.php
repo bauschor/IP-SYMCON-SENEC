@@ -24,7 +24,7 @@
             $this->RegisterPropertyString("SENEC_Local_IP", "");
             $this->RegisterPropertyString('SENEC_Local_Query', '{"ENERGY":{"GUI_BAT_DATA_FUEL_CHARGE":"","STAT_STATE":"","GUI_BAT_DATA_POWER":"","GUI_INVERTER_POWER":"","GUI_HOUSE_POW":"","GUI_GRID_POW":""},"PM1OBJ1":{},"STATISTIC":{}}');
             $this->RegisterPropertyInteger("SENEC_Local_Data_Update_Interval", 10);
-            $this->RegisterTimer("SENEC_Local_Update_Data", 0, "SENEC_LOCAL_GetData($this->InstanceID, $this->ReadPropertyString('SENEC_Local_Query'));");
+            $this->RegisterTimer("SENEC_Local_Update_Data", 0, "SENEC_LOCAL_GetData($this->InstanceID);");
 
         }   
 		
@@ -202,7 +202,11 @@
 
 
         // -------------------------------------------------------------------------        
-        public function LOCAL_GetData($ip, $requestarray) {
+        public function LOCAL_GetData() {
+
+            $ip = $this->ReadPropertyString('SENEC_Local_IP');
+            $requestarray = $this->ReadPropertyString('SENEC_Local_Query');
+
             $curl = curl_init();
 
             curl_setopt($curl, CURLOPT_URL, "https://".$ip."/lala.cgi");
