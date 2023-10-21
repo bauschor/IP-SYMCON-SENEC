@@ -1,5 +1,14 @@
 <?php
-    // Klassendefinition
+/*
+*   Dieses Modul basiert auf Infos von
+*   https://documenter.getpostman.com/view/10329335/UVCB9ihZ
+*   https://documenter.getpostman.com/view/10329335/UVCB9ihW
+*
+*   Und der Vorarbeit von https://community.symcon.de/u/oheidinger/summary
+*   siehe hierzu auch https://community.symcon.de/t/senec-home-g2-plus/35997/6
+*/
+
+// Klassendefinition
     class SymconSenecData extends IPSModule {
  
         // Überschreibt die interne IPS_Create($id) Funktion
@@ -16,7 +25,7 @@
             $this->RegisterPropertyString("SENEC_API_Data_Stub", "dashboard");
 
             $this->RegisterPropertyInteger("SENEC_API_Data_Update_Interval", 6);
-            $this->RegisterTimer("SENEC_API_Update_Data", 0, "SENEC_API_GetData($this->InstanceID);");
+            $this->RegisterTimer("SENEC_API_Update_Data", 6*60*1000, "SENEC_API_GetData($this->InstanceID);");
 
             $this->RegisterVariableString("SENEC_API_Token", "Access Token");
             $this->RegisterVariableString("SENEC_API_ID", "Anlagen ID");
@@ -25,7 +34,7 @@
             $this->RegisterPropertyString("SENEC_Local_IP", "");
             $this->RegisterPropertyString('SENEC_Local_Query', '{"ENERGY":{"GUI_BAT_DATA_FUEL_CHARGE":"","STAT_STATE":"","GUI_BAT_DATA_POWER":"","GUI_INVERTER_POWER":"","GUI_HOUSE_POW":"","GUI_GRID_POW":""},"PM1OBJ1":{}}');
             $this->RegisterPropertyInteger("SENEC_Local_Data_Update_Interval", 10);
-            $this->RegisterTimer("SENEC_Local_Update_Data", 0, "SENEC_LOCAL_GetData($this->InstanceID);");
+            $this->RegisterTimer("SENEC_Local_Update_Data", 10*1000, "SENEC_LOCAL_GetData($this->InstanceID);");
         }   
 		
 
@@ -49,6 +58,7 @@
         * SENEC_API_GetToken();
         * SENEC_API_GetID();
         * SENEC_API_GetData();
+        * SENEC_LOCAL_GetData();
         **/
 
         // -------------------------------------------------------------------------        
@@ -94,6 +104,7 @@
                 $curl_error = curl_error($curl);
                 $msg = "FEHLER: ".$curl_error;
                 $this->_setIPSvar($this->InstanceID, "API_GetToken Status", $msg);
+                $this->_SetAPIupdateInterval(0);                
             } else {
                 $token = json_decode($response, true)['token'];
     			$this->SetValue("SENEC_API_Token", $token);
@@ -139,7 +150,8 @@
             if ($curl_errno > 0) {
                 $curl_error = curl_error($curl);
                 $msg = "FEHLER: ".$curl_error;
-                $this->_setIPSvar($this->InstanceID, "API_GetID Status", $msg);                           
+                $this->_setIPSvar($this->InstanceID, "API_GetID Status", $msg);
+                $this->_SetAPIupdateInterval(0);                                        
             } else {
                 $id = json_decode($response, true)[0]['id'];
                 $this->SetValue("SENEC_API_ID", $id);
@@ -260,7 +272,7 @@
                 $CatID = IPS_CreateCategory();                      // Kategorie anlegen
                 IPS_SetParent($CatID, $parentID);                   // Kategorie einsortieren
                 IPS_SetName($CatID, $name);                         // Kategorie benennen
-                IPS_SetIdent($CatID, $ident);
+                IPS_SetIdent($CatID, $ident);                       // Ident für diese Kategorie setzen
             }
 
             return $CatID;
@@ -274,8 +286,6 @@
 
             switch ($ips_type){
             case 31:                                                    // array
-        //        echo "\n\n".$name." is an array\n";
-
                 $CatID = @IPS_GetObjectIDByIdent($ident, $parentID);
 
                 if ($CatID === false){
@@ -290,7 +300,6 @@
                 break;
 
             case 32:                                                    // object
-                echo "\n\n".$name." is an object\n";  
         /*
                 foreach ($value as $Oname => $Ovalue) {
                     $this->_setIPSvar($CatID, $Oname, $Ovalue);
@@ -299,8 +308,6 @@
                 break;
 
             default:
-        //        echo ($name." -> ".$value."\n");
-                
                 $ident = str_replace(array("-", "/", ":", ".", " "), "_", $name);
                 $var_id = @IPS_GetObjectIDByIdent($ident, $parentID);
 
@@ -308,7 +315,7 @@
                     $var_id = IPS_CreateVariable($ips_type);
                     IPS_SetParent($var_id, $parentID);          // einsortieren
                     IPS_SetName($var_id, $name);                // name setzen
-                    IPS_SetIdent($var_id, $ident);              // jetzt erst ident setzen, weil der pro zweig eindeutig sein muss
+                    IPS_SetIdent($var_id, $ident);              // ident setzen, weil der pro zweig eindeutig sein muss
                 }
 
                 SetValue($var_id, $value);                
@@ -324,8 +331,6 @@
 
             switch ($ips_type){
             case 31:                                                    // array
-        //      echo "\n\n".$name." is an array\n";
-
                 $CatID = @IPS_GetObjectIDByIdent($ident, $parentID);
 
                 if ($CatID === false){
@@ -340,7 +345,6 @@
                 break;
 
             case 32:                                                    // object
-        //      echo "\n\n".$name." is an object\n";  
         /*
                 foreach ($value as $Oname => $Ovalue) {
                     $this->_setIPSvarLALA($CatID, $Oname, $Ovalue);
@@ -349,13 +353,10 @@
                 break;
 
             default:
-        //      echo ($name." -> ".$value."\n");
-                
                 $ident = str_replace(array("-", "/", ":", "."), "_", $name);
 
                 $data = substr(strrchr($value, "_"), 1);
                 $type = strstr($value, "_", true);
-                // $ips_type = $this->_transformSENECtoIPStype($type);
 
                 switch ($type){
                     case 'fl':
@@ -389,7 +390,7 @@
                     $var_id = IPS_CreateVariable($ips_type);    // Variable anlegen
                     IPS_SetParent($var_id, $parentID);          // einsortieren
                     IPS_SetName($var_id, $name);                // name setzen
-                    IPS_SetIdent($var_id, $ident);              // jetzt erst ident setzen, weil der pro zweig eindeutig sein muss
+                    IPS_SetIdent($var_id, $ident);              // ident setzen, weil der pro zweig eindeutig sein muss
                 }
 
                 SetValue($var_id, $data);                
@@ -418,7 +419,7 @@
             if (is_object($data)){
                 return 32;              // object
             }        
-            return 3;                   // string
+            return 3;                   // unknown => string
         }        
 
         // --------------------------------------------------
@@ -448,7 +449,6 @@
             $this->UpdateFormField('InfoPopup_Text', 'caption', $text);
             $this->UpdateFormField('InfoPopup', 'visible', true);
         }
-
 
         // -------------------------------------------------------------------------
         private function _SetAPIupdateInterval($minuten){
