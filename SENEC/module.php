@@ -25,8 +25,6 @@
             $this->RegisterPropertyString("SENEC_API_Data_Stub", "dashboard");
 
             $this->RegisterPropertyInteger("SENEC_API_Data_Update_Interval", 6);
-            $this->RegisterTimer("SENEC_API_Update_Data", 0, "SENEC_API_GetData($this->InstanceID);");
-            $this->_SetAPIupdateInterval(0);
 
             $this->RegisterVariableString("SENEC_API_Token", "Access Token");
             $this->RegisterVariableString("SENEC_API_ID", "Anlagen ID");
@@ -35,8 +33,6 @@
             $this->RegisterPropertyString("SENEC_Local_IP", "");
             $this->RegisterPropertyString('SENEC_Local_Query', '{"ENERGY":{"GUI_BAT_DATA_FUEL_CHARGE":"","STAT_STATE":"","GUI_BAT_DATA_POWER":"","GUI_INVERTER_POWER":"","GUI_HOUSE_POW":"","GUI_GRID_POW":""},"PM1OBJ1":{}}');
             $this->RegisterPropertyInteger("SENEC_Local_Data_Update_Interval", 10);
-            $this->RegisterTimer("SENEC_Local_Update_Data", 0, "SENEC_LOCAL_GetData($this->InstanceID);");
-            $this->_SetLALAupdateInterval(0);            
         }   
 		
 
@@ -45,9 +41,11 @@
             // Diese Zeile nicht löschen
             parent::ApplyChanges();
 
+            $this->RegisterTimer("SENEC_API_Update_Data", 0, "SENEC_API_GetData($this->InstanceID);");
             $minuten = $this->ReadPropertyInteger('SENEC_API_Data_Update_Interval');
             $this->_SetAPIupdateInterval($minuten);
 
+            $this->RegisterTimer("SENEC_Local_Update_Data", 0, "SENEC_LOCAL_GetData($this->InstanceID);");
             $sekunden = $this->ReadPropertyInteger('SENEC_Local_Data_Update_Interval');
             $this->_SetLALAupdateInterval($sekunden);
         }
