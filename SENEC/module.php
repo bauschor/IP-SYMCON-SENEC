@@ -206,7 +206,8 @@
 
             $ip = $this->ReadPropertyString('SENEC_Local_IP');
             $requestarray = $this->ReadPropertyString('SENEC_Local_Query');
-
+            $timeout = 15;
+            
             $curl = curl_init();
 
             curl_setopt($curl, CURLOPT_URL, "https://".$ip."/lala.cgi");
