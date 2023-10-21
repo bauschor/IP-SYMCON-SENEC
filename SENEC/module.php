@@ -25,7 +25,7 @@
             $this->RegisterPropertyString("SENEC_API_Data_Stub", "dashboard");
 
             $this->RegisterPropertyInteger("SENEC_API_Data_Update_Interval", 6);
-            $this->RegisterTimer("SENEC_API_Update_Data", 0, "SENEC_API_GetData($this->InstanceID);");
+            $this->RegisterTimer("SENEC_API_Update_Data", 0, "SENEC_API_FullCycle($this->InstanceID);");
 
             $this->RegisterVariableString("SENEC_API_Token", "Access Token");
             $this->RegisterVariableString("SENEC_API_ID", "Anlagen ID");
@@ -96,9 +96,7 @@
 
             curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
 
-
-            $response = curl_exec($curl);                                                               // ok, jetzt ausführen
-
+            $response = curl_exec($curl);                                                   // ok, jetzt ausführen
             $curl_errno = curl_errno($curl);
 
             if ($curl_errno > 0) {
@@ -113,8 +111,9 @@
                 $this->_setIPSvar($this->InstanceID, "API_GetToken Status", "OK");                
             }
             curl_close($curl);                                                              // cURL Session beenden
-
             $this->_popupMessage($msg);
+
+            return $curl_errno;            
       	}
 
         // -------------------------------------------------------------------------        
@@ -146,7 +145,6 @@
             curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
         
             $response = curl_exec($curl);                                                   // ok, jetzt ausführen
-
             $curl_errno = curl_errno($curl);
 
             if ($curl_errno > 0) {
@@ -161,7 +159,9 @@
                 $this->_setIPSvar($this->InstanceID, "API_GetID Status", "OK");                                           
             }            
             curl_close($curl);                                                              // cURL Session beenden
-            $this->_popupMessage($msg);            
+            $this->_popupMessage($msg);
+            
+            return $curl_errno
         }
 
         // -------------------------------------------------------------------------        
@@ -198,7 +198,6 @@
             curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
         
             $response = curl_exec($curl);                                                       // ok, jetzt ausführen
-
             $curl_errno = curl_errno($curl);
 
             if ($curl_errno > 0) {
@@ -215,9 +214,24 @@
                 }
                 $this->_setIPSvar($this->InstanceID, "API_GetData Status", "OK");                                
             }
-            curl_close($curl);                                                              // cURL Session beenden
+            curl_close($curl);                                                                 // cURL Session beenden
+
+            return $curl_errno;            
         }
 
+        // -------------------------------------------------------------------------        
+        public function API_FullCycle() {
+            if($this->API_GetToken() > 0){
+                return 1;
+            }
+            if($this->API_GetID() > 0){
+                return 1;
+            }
+            if($this->API_GetData() > 0){
+                return 1;
+            }
+            return 0;
+        }
 
         // -------------------------------------------------------------------------        
         public function LOCAL_GetData() {
@@ -259,6 +273,8 @@
             }
 
             curl_close($curl);                                                      // cURL Session beenden
+
+            return $curl_errno;
         }
 
         // ---------------------------------------------------------------------------------------------------------------
