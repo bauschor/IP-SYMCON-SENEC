@@ -6,10 +6,6 @@
         public function Create() {
             // Diese Zeile nicht löschen.
             parent::Create();
-
-            $this->_createIPScategory($this->InstanceID, "Vars (API)");
-            $this->_createIPScategory($this->InstanceID, "Vars (LOCAL)");
-
             
             $this->RegisterPropertyString("SENEC_API_Username", "");
 	        $this->RegisterPropertyString("SENEC_API_Password", "");
@@ -43,6 +39,9 @@
 
             $sekunden = $this->ReadPropertyInteger('SENEC_Local_Data_Update_Interval');
             $this->_SetLALAupdateInterval($sekunden);
+
+            $this->_createIPScategory($this->InstanceID, "Vars (API)");
+            $this->_createIPScategory($this->InstanceID, "Vars (LOCAL)");
         }
  
  
