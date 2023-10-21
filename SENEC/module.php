@@ -93,11 +93,12 @@
             if ($curl_errno > 0) {
                 $curl_error = curl_error($curl);
                 $msg = "FEHLER: ".$curl_error;
-                $this->_setIPSvar($this->InstanceID, "Fehler API_GetToken", $msg);
+                $this->_setIPSvar($this->InstanceID, "API_GetToken Status", $msg);
             } else {
                 $token = json_decode($response, true)['token'];
     			$this->SetValue("SENEC_API_Token", $token);
                 $msg = "Token erhalten: ".$token;
+                $this->_setIPSvar($this->InstanceID, "API_GetToken Status", "OK");                
             }
             curl_close($curl);                                                              // cURL Session beenden
 
@@ -138,11 +139,12 @@
             if ($curl_errno > 0) {
                 $curl_error = curl_error($curl);
                 $msg = "FEHLER: ".$curl_error;
-                $this->_setIPSvar($this->InstanceID, "Fehler API_GetID", $msg);                           
+                $this->_setIPSvar($this->InstanceID, "API_GetID Status", $msg);                           
             } else {
                 $id = json_decode($response, true)[0]['id'];
                 $this->SetValue("SENEC_API_ID", $id);
-                $msg = "Anlagen ID: ".$id;                
+                $msg = "Anlagen ID: ".$id;
+                $this->_setIPSvar($this->InstanceID, "API_GetID Status", "OK");                                           
             }            
             curl_close($curl);                                                              // cURL Session beenden
             $this->_popupMessage($msg);            
@@ -187,7 +189,7 @@
             if ($curl_errno > 0) {
                 $curl_error = curl_error($curl);
                 $msg = "FEHLER: ".$curl_error;
-                $this->_setIPSvar($this->InstanceID, "Fehler API_GetData", $msg);                
+                $this->_setIPSvar($this->InstanceID, "API_GetData Status", $msg);                
                 $this->_popupMessage($msg);
                 $this->_SetAPIupdateInterval(0);                               
             } else {
@@ -197,6 +199,7 @@
                     // $this->_setIPSvar($this->InstanceID, $name, $value);
                     $this->_setIPSvar($vars_api, $name, $value);                    
                 }
+                $this->_setIPSvar($this->InstanceID, "API_GetData Status", "OK");                                
             }
             curl_close($curl);                                                              // cURL Session beenden
         }
@@ -229,7 +232,7 @@
             if ($curl_errno > 0) {
                 $curl_error = curl_error($curl);
                 $msg = "FEHLER: ".$curl_error;
-                $this->_setIPSvar($this->InstanceID, "Fehler LOCAL_GetData", $msg);                
+                $this->_setIPSvar($this->InstanceID, "LOCAL_GetData Status", $msg);                
                 $this->_popupMessage($msg);
                 $this->_SetAPIupdateInterval(0);        
             }else{
@@ -239,6 +242,7 @@
                     // $this->_setIPSvarLALA($this->InstanceID, $name, $value);
                     $this->_setIPSvarLALA($vars_lala, $name, $value);                    
                 }
+                $this->_setIPSvar($this->InstanceID, "LOCAL_GetData Status", "OK");                                
             }
 
             curl_close($curl);                                                      // cURL Session beenden
@@ -299,7 +303,7 @@
             default:
         //        echo ($name." -> ".$value."\n");
                 
-                $ident = str_replace(array("-", "/", ":", "."), "_", $name);
+                $ident = str_replace(array("-", "/", ":", ".", " "), "_", $name);
                 $var_id = @IPS_GetObjectIDByIdent($ident, $parentID);
 
                 if ($var_id === false){
