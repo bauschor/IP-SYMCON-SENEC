@@ -26,10 +26,10 @@
     ],
     "actions":
     [
-        { "type": "Button", "label": "API Token holen", "onClick": "SENEC_API_GetToken($id);" },
-        { "type": "Button", "label": "AnlagenID abfragen", "onClick": "SENEC_API_GetID($id);" },
-        { "type": "Button", "label": "GetData (API)", "onClick": "SENEC_API_GetData($id);" },
-        { "type": "Button", "label": "GetData (local)", "onClick": "SENEC_LOCAL_GetData($id);" }
+        { "type": "Button", "label": "API-Token holen", "onClick": "SENEC_API_GetToken($id);" },
+        { "type": "Button", "label": "Anlagen-ID abfragen", "onClick": "SENEC_API_GetID($id);" },
+        { "type": "Button", "label": "Daten per API holen", "onClick": "SENEC_API_GetData($id);" },
+        { "type": "Button", "label": "Daten lokal vom Speicher einlesen", "onClick": "SENEC_LOCAL_GetData($id);" }
 
     ]
 }
