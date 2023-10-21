@@ -263,6 +263,8 @@
                 IPS_SetName($CatID, $name);                         // Kategorie benennen
                 IPS_SetIdent($CatID, $ident);
             }
+            
+            return $CatID;
         }
 
         // -----------------------------------------------------
