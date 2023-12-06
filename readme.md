@@ -7,7 +7,7 @@ Für die Ergebnisse werden unterhalb der Instanz zwei neue Kategorien angelegt
 ![image](https://github.com/bauschor/IP-SYMCON-SENEC/assets/24826836/02134215-bf55-4a94-92f5-2ae6672344d5)
 
 
-Es folgende Funktionen zur Verfügung gestellt:
+Es werden folgende Funktionen zur Verfügung gestellt:
 - SENEC_API_GetToken();
   (muss als erstes aufgerufen werden)
 - SENEC_API_GetID();
