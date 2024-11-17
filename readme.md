@@ -19,3 +19,8 @@ Es werden folgende Funktionen zur Verfügung gestellt:
   
 - SENEC_LOCAL_GetData();
   (diese Funktion triggert das lokale Auslesen der Daten)
+
+- SENEC_LOCAL_ForceCharging();
+  (diese Funktion startet eine manuelle Ladung des Akkus)
+- SENEC_LOCAL_ProhibitCharging();
+  (diese Funktion Stoppt die manuelle Ladung des Akkus)

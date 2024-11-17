@@ -32,9 +32,12 @@
 
 
             $this->RegisterPropertyString("SENEC_Local_IP", "");
-            $this->RegisterPropertyString('SENEC_Local_Query', '{"ENERGY":{"GUI_BAT_DATA_FUEL_CHARGE":"","STAT_STATE":"","GUI_BAT_DATA_POWER":"","GUI_INVERTER_POWER":"","GUI_HOUSE_POW":"","GUI_GRID_POW":""},"PM1OBJ1":{}}');
+            $this->RegisterPropertyString('SENEC_Local_Query', '{"ENERGY":{"GUI_BAT_DATA_FUEL_CHARGE":"","STAT_STATE":"","GUI_BAT_DATA_POWER":"","GUI_INVERTER_POWER":"","GUI_HOUSE_POW":"","GUI_GRID_POW":"","SAFE_CHARGE_RUNNING":""},"PM1OBJ1":{}}');
             $this->RegisterPropertyInteger("SENEC_Local_Data_Update_Interval", 10);
             $this->RegisterTimer("SENEC_Local_Update_Data", 0, "SENEC_LOCAL_GetData($this->InstanceID);");
+
+            $this->RegisterPropertyString('SENEC_Local_Force_Charging', '{"ENERGY":{"SAFE_CHARGE_FORCE":"u8_01"}');
+            $this->RegisterPropertyString('SENEC_Local_Prohibit_Charging', '{"ENERGY":{"SAFE_CHARGE_PROHIBIT":"u8_01"}');
         }   
 		
 
@@ -60,6 +63,8 @@
         * SENEC_API_GetData();
         * SENEC_API_FullCycle();
         * SENEC_LOCAL_GetData();
+        * SENEC_LOCAL_ForceCharging();
+        * SENEC_LOCAL_ProhibitCharging();
         **/
 
         // -------------------------------------------------------------------------        
@@ -268,6 +273,78 @@
                     $this->_setIPSvarLALA($vars_lala, $name, $value);                    
                 }
                 $this->_setIPSvar($this->InstanceID, "LOCAL_GetData Status", "OK");                                
+            }
+
+            curl_close($curl);                                                      // cURL Session beenden
+
+            return $curl_errno;
+        }
+
+        // -------------------------------------------------------------------------        
+        public function LOCAL_ForceCharging() {
+
+            $ip = $this->ReadPropertyString('SENEC_Local_IP');
+            $requestarray = $this->ReadPropertyString('SENEC_Local_Force_Charging');
+            $timeout = 15;
+
+            $curl = curl_init();
+
+            curl_setopt($curl, CURLOPT_URL, "https://".$ip."/lala.cgi");
+            curl_setopt($curl, CURLOPT_POST, true);                                 // Ein POST request soll es werden
+            curl_setopt($curl, CURLOPT_POSTFIELDS, $requestarray);                  // Request als URL-Codierten String schicken
+            curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);                       // Die Antwort bitte nicht an STDOUT
+            curl_setopt($curl, CURLOPT_TIMEOUT, $timeout);
+            curl_setopt($curl, CURLOPT_HEADER, false);                              // Bitte den Header nicht in die Ausgabe aufnehmen
+            curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, 0);                          // keine Prüfung ob Hostname im Zertifikat
+            curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);                      // keine Überprüfung des Peerzertifikats
+            curl_setopt($curl, CURLOPT_FOLLOWLOCATION, false);                      // Keinen redirects folgen
+        
+            $response = curl_exec($curl);                                           // Hier das Ergebnis
+            $curl_errno = curl_errno($curl);
+
+            if ($curl_errno > 0) {
+                $curl_error = curl_error($curl);
+                $msg = "FEHLER: ".$curl_error;
+                $this->_setIPSvar($this->InstanceID, "LOCAL_GetData Status", $msg);                
+                $this->_popupMessage($msg);
+            }else{
+                $this->_setIPSvar($this->InstanceID, "LOCAL_GetData Status", "Manuelles Laden gestartet");                                
+            }
+
+            curl_close($curl);                                                      // cURL Session beenden
+
+            return $curl_errno;
+        }
+
+        // -------------------------------------------------------------------------        
+        public function LOCAL_ProhibitCharging() {
+
+            $ip = $this->ReadPropertyString('SENEC_Local_IP');
+            $requestarray = $this->ReadPropertyString('SENEC_Local_Prohibit_Charging');
+            $timeout = 15;
+
+            $curl = curl_init();
+
+            curl_setopt($curl, CURLOPT_URL, "https://".$ip."/lala.cgi");
+            curl_setopt($curl, CURLOPT_POST, true);                                 // Ein POST request soll es werden
+            curl_setopt($curl, CURLOPT_POSTFIELDS, $requestarray);                  // Request als URL-Codierten String schicken
+            curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);                       // Die Antwort bitte nicht an STDOUT
+            curl_setopt($curl, CURLOPT_TIMEOUT, $timeout);
+            curl_setopt($curl, CURLOPT_HEADER, false);                              // Bitte den Header nicht in die Ausgabe aufnehmen
+            curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, 0);                          // keine Prüfung ob Hostname im Zertifikat
+            curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);                      // keine Überprüfung des Peerzertifikats
+            curl_setopt($curl, CURLOPT_FOLLOWLOCATION, false);                      // Keinen redirects folgen
+        
+            $response = curl_exec($curl);                                           // Hier das Ergebnis
+            $curl_errno = curl_errno($curl);
+
+            if ($curl_errno > 0) {
+                $curl_error = curl_error($curl);
+                $msg = "FEHLER: ".$curl_error;
+                $this->_setIPSvar($this->InstanceID, "LOCAL_GetData Status", $msg);                
+                $this->_popupMessage($msg);
+            }else{
+                $this->_setIPSvar($this->InstanceID, "LOCAL_GetData Status", "Manuelles Laden gestoppt");                                
             }
 
             curl_close($curl);                                                      // cURL Session beenden
