@@ -206,8 +206,6 @@
             if ($curl_errno > 0) {
                 $curl_error = curl_error($curl);
                 $msg = "FEHLER: ".$curl_error;
-                $this->_setIPSvar($this->InstanceID, "API_GetData Status", $msg);                
-                $this->_popupMessage($msg);
                 $this->_SetAPIupdateInterval(0);                               
             } else {
                 $json = json_decode($response, true);
@@ -215,8 +213,11 @@
                 foreach ($json as $name => $value) {
                     $this->_setIPSvar($vars_api, $name, $value);                    
                 }
-                $this->_setIPSvar($this->InstanceID, "API_GetData Status", "OK");                                
+                $msg = "OK";
             }
+            $this->_setIPSvar($this->InstanceID, "API_GetData Status", $msg);                
+            $this->_popupMessage($msg);
+
             curl_close($curl);                                                                 // cURL Session beenden
 
             return $curl_errno;            
@@ -263,8 +264,6 @@
             if ($curl_errno > 0) {
                 $curl_error = curl_error($curl);
                 $msg = "FEHLER: ".$curl_error;
-                $this->_setIPSvar($this->InstanceID, "LOCAL_GetData Status", $msg);                
-                $this->_popupMessage($msg);
                 $this->_SetLALAupdateInterval(0);        
             }else{
                 $json = json_decode($response, true);                               // Dekodieren der Antwort
@@ -272,8 +271,10 @@
                 foreach ($json as $name => $value) {
                     $this->_setIPSvarLALA($vars_lala, $name, $value);                    
                 }
-                $this->_setIPSvar($this->InstanceID, "LOCAL_GetData Status", "OK");                                
+                $msg = "OK";
             }
+            $this->_setIPSvar($this->InstanceID, "LOCAL_GetData Status", $msg);                
+            $this->_popupMessage($msg);            
 
             curl_close($curl);                                                      // cURL Session beenden
 
@@ -305,11 +306,11 @@
             if ($curl_errno > 0) {
                 $curl_error = curl_error($curl);
                 $msg = "FEHLER: ".$curl_error;
-                $this->_setIPSvar($this->InstanceID, "LOCAL_GetData Status", $msg);                
-                $this->_popupMessage($msg);
             }else{
-                $this->_setIPSvar($this->InstanceID, "LOCAL_GetData Status", "Manuelles Laden gestartet");                                
+                $msg = "Manuelles Laden gestartet";
             }
+            $this->_setIPSvar($this->InstanceID, "LOCAL_GetData Status", msg);
+            $this->_popupMessage($msg);                                              
 
             curl_close($curl);                                                      // cURL Session beenden
 
@@ -341,11 +342,12 @@
             if ($curl_errno > 0) {
                 $curl_error = curl_error($curl);
                 $msg = "FEHLER: ".$curl_error;
-                $this->_setIPSvar($this->InstanceID, "LOCAL_GetData Status", $msg);                
-                $this->_popupMessage($msg);
             }else{
-                $this->_setIPSvar($this->InstanceID, "LOCAL_GetData Status", "Manuelles Laden gestoppt");                                
+                $msg = "Manuelles Laden gestoppt";
             }
+            $this->_setIPSvar($this->InstanceID, "LOCAL_GetData Status", $msg);                
+            $this->_popupMessage($msg);
+
 
             curl_close($curl);                                                      // cURL Session beenden
 
