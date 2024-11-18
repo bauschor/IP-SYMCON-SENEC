@@ -309,7 +309,7 @@
             }else{
                 $msg = "Manuelles Laden gestartet";
             }
-            $this->_setIPSvar($this->InstanceID, "LOCAL_GetData Status", msg);
+            $this->_setIPSvar($this->InstanceID, "LOCAL_GetData Status", $msg);
             $this->_popupMessage($msg);                                              
 
             curl_close($curl);                                                      // cURL Session beenden

@@ -31,6 +31,6 @@
         { "type": "Button", "label": "Daten per SENEC API holen", "onClick": "SENEC_API_GetData($id);" },
         { "type": "Button", "label": "Daten lokal vom SENEC Gerät einlesen", "onClick": "SENEC_LOCAL_GetData($id);" },
         { "type": "Button", "label": "Manuelle Ladung starten", "onClick": "SENEC_LOCAL_ForceCharging($id);" },
-        { "type": "Button", "label": "Manuelle Ladung stoppen", "onClick": "SENEC_LOCAL_ProhibitCharging($id);" }
+        { "type": "Button", "label": "Entladen freigeben", "onClick": "SENEC_LOCAL_ProhibitCharging($id);" }
     ]
 }
