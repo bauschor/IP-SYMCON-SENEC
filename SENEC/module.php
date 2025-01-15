@@ -19,10 +19,10 @@
             $this->RegisterPropertyString("SENEC_API_Username", "");
 	        $this->RegisterPropertyString("SENEC_API_Password", "");
 		
-            $this->RegisterPropertyString("SENEC_API_Base_Url", "https://app-gateway-prod.senecops.com/v1/senec");
-            $this->RegisterPropertyString("SENEC_API_Login_Stub", "login");
-            $this->RegisterPropertyString("SENEC_API_Anlagen_Stub", "anlagen");
-            $this->RegisterPropertyString("SENEC_API_Data_Stub", "dashboard");
+            $this->RegisterPropertyString("SENEC_API_Login_Url",     "https://app-gateway-prod.senecops.com/v1/senec/login");
+            $this->RegisterPropertyString("SENEC_API_Statistic_Url", "https://app-gateway-prod.senecops.com/v1/senec/anlagen");
+            $this->RegisterPropertyString("SENEC_APIv1_Data_Url",    "https://app-gateway.prod.senec.dev/v1/senec/systems");
+            $this->RegisterPropertyString("SENEC_APIv2_Data_Url",    "https://app-gateway.prod.senec.dev/v2/senec/systems");
 
             $this->RegisterPropertyInteger("SENEC_API_Data_Update_Interval", 6);
             $this->RegisterTimer("SENEC_API_Update_Data", 0, "SENEC_API_FullCycle($this->InstanceID);");
@@ -61,6 +61,7 @@
         * SENEC_API_GetToken();
         * SENEC_API_GetID();
         * SENEC_API_GetData();
+        * SENEC_API_GetTechnicalInfos();
         * SENEC_API_FullCycle();
         * SENEC_LOCAL_GetData();
         * SENEC_LOCAL_ForceCharging();
@@ -70,10 +71,9 @@
         // -------------------------------------------------------------------------        
         public function API_GetToken() {
 
-            $user_agent     = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_1) AppleWebKit/537.36 (K HTML, like Gecko) Chrome/61.0.3163.100 Safari/537.36';
+            $user_agent = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_1) AppleWebKit/537.36 (K HTML, like Gecko) Chrome/61.0.3163.100 Safari/537.36';
 
-            $baseurl    = $this->ReadPropertyString("SENEC_API_Base_Url");
-            $loginstub  = $this->ReadPropertyString("SENEC_API_Login_Stub");
+            $loginurl   = $this->ReadPropertyString("SENEC_API_Login_Url");
             $username   = $this->ReadPropertyString("SENEC_API_Username");            
             $password   = $this->ReadPropertyString("SENEC_API_Password");            
 
@@ -84,7 +84,7 @@
 
             $curl = curl_init();                                                            // los geht's
 
-            curl_setopt($curl, CURLOPT_URL, $baseurl."/".$loginstub);                       // URL zum Loginformular
+            curl_setopt($curl, CURLOPT_URL, $loginurl);                                     // URL zum Loginformular
             curl_setopt($curl, CURLOPT_POST, true);                                         // Ein POST request soll es werden
             curl_setopt($curl, CURLOPT_POSTFIELDS, $credentials);                           // Die Infos als JSON Body schicken
             
@@ -124,15 +124,14 @@
         // -------------------------------------------------------------------------        
         public function API_GetID() {
 
-            $user_agent     = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_1) AppleWebKit/537.36 (K HTML, like Gecko) Chrome/61.0.3163.100 Safari/537.36';
+            $user_agent  = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_1) AppleWebKit/537.36 (K HTML, like Gecko) Chrome/61.0.3163.100 Safari/537.36';
 
-            $baseurl        = $this->ReadPropertyString("SENEC_API_Base_Url");
-            $anlagenstub    = $this->ReadPropertyString("SENEC_API_Anlagen_Stub");
-            $token          = $this->GetValue("SENEC_API_Token");
+            $anlagenurl  = $this->ReadPropertyString("SENEC_API_Statistic_Url");
+            $token       = $this->GetValue("SENEC_API_Token");
 
             $curl = curl_init();                                                            // los geht's
 
-            curl_setopt($curl, CURLOPT_URL, $baseurl."/".$anlagenstub);                     // URL zu den Anlageninfos
+            curl_setopt($curl, CURLOPT_URL, $anlagenurl);                                   // URL zu den Anlageninfos
             curl_setopt($curl, CURLOPT_POST, false);                                        // Diesesmal kein POST request
 
             curl_setopt($curl, CURLOPT_USERAGENT, $user_agent);                             // Hilft bei einer eventuellen Sessionvalidation auf Serverseite
@@ -171,57 +170,34 @@
         // -------------------------------------------------------------------------        
         public function API_GetData() {
 
-            $user_agent     = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_1) AppleWebKit/537.36 (K HTML, like Gecko) Chrome/61.0.3163.100 Safari/537.36';
+            $user_agent = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_1) AppleWebKit/537.36 (K HTML, like Gecko) Chrome/61.0.3163.100 Safari/537.36';
 
-            $baseurl        = $this->ReadPropertyString("SENEC_API_Base_Url");
-            $anlagenstub    = $this->ReadPropertyString("SENEC_API_Anlagen_Stub");
-            $datastub       = $this->ReadPropertyString("SENEC_API_Data_Stub");
-            $token          = $this->GetValue("SENEC_API_Token");
-            $id             = $this->GetValue("SENEC_API_ID",);
+            $v2dataurl  = $this->ReadPropertyString("SENEC_APIv2_Data_Url");
+            $token      = $this->GetValue("SENEC_API_Token");
+            $id         = $this->GetValue("SENEC_API_ID",);
 
-            $vars_api = $this->_createIPScategory($this->InstanceID, "Vars (API)");
+            $vars_api   = $this->_createIPScategory($this->InstanceID, "Vars (API)");
 
+            $URL_dashboard = $v2dataurl."/".$id."/dashboard";
 
-            $curl = curl_init();                                                                // los geht's
-
-            curl_setopt($curl, CURLOPT_URL, $baseurl."/".$anlagenstub."/".$id."/".$datastub);   // URL zu den Daten
-            curl_setopt($curl, CURLOPT_POST, false);                                            // Diesesmal kein POST request
-
-            curl_setopt($curl, CURLOPT_USERAGENT, $user_agent);                                 // Hilft bei einer eventuellen Sessionvalidation auf Serverseite
-            curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, 0);                                      // keine Prüfung ob Hostname im Zertifikat
-            curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);                                  // keine Überprüfung des Peerzertifikats
-            curl_setopt($curl, CURLOPT_FOLLOWLOCATION, false);                                  // redirects nicht folgen
-        
-            curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);                                   // Die Antwort bitte als Rückgabewert von curl_exec
-        
-            $headers = [
-                'Content-Type: application/json',
-                'authorization: '.$token
-            ];
-            curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
-        
-            $response = curl_exec($curl);                                                       // ok, jetzt ausführen
-            $curl_errno = curl_errno($curl);
-
-            if ($curl_errno > 0) {
-                $curl_error = curl_error($curl);
-                $msg = "FEHLER: ".$curl_error;
-                $this->_SetAPIupdateInterval(0);                               
-            } else {
-                $json = json_decode($response, true);
-
-                foreach ($json as $name => $value) {
-                    $this->_setIPSvar($vars_api, $name, $value);                    
-                }
-                $msg = "OK";
-            }
-            $this->_setIPSvar($this->InstanceID, "API_GetData Status", $msg);                
-            $this->_popupMessage($msg);
-
-            curl_close($curl);                                                                 // cURL Session beenden
-
-            return $curl_errno;            
+            return _getAndStoreData($URL_dashboard, $token, $vars_api);
         }
+
+        // -------------------------------------------------------------------------        
+        public function API_GetTechnicalInfos() {
+
+            $user_agent = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_1) AppleWebKit/537.36 (K HTML, like Gecko) Chrome/61.0.3163.100 Safari/537.36';
+
+            $v1dataurl  = $this->ReadPropertyString("SENEC_APIv1_Data_Url");
+            $token      = $this->GetValue("SENEC_API_Token");
+            $id         = $this->GetValue("SENEC_API_ID",);
+
+            $vars_api   = $this->_createIPScategory($this->InstanceID, "Vars (API)");
+
+            $URL_technical = $v1dataurl.."/".$id."/technical-data";
+
+            return _getAndStoreData($URL_technical, $token, $vars_api);
+        }        
 
         // -------------------------------------------------------------------------        
         public function API_FullCycle() {
@@ -229,6 +205,9 @@
                 return 1;
             }
             if($this->API_GetID() > 0){
+                return 1;
+            }
+            if($this->API_GetTechnicalInfos() > 0){
                 return 1;
             }
             if($this->API_GetData() > 0){
@@ -358,6 +337,53 @@
         /**
         * interne Funktionen in diesem Modul
         **/
+        // -----------------------------------------------------
+        private function _getAndStoreData($URL, $token, $destination){
+
+            $user_agent  = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_1) AppleWebKit/537.36 (K HTML, like Gecko) Chrome/61.0.3163.100 Safari/537.36';
+
+            $curl = curl_init();                                                                // los geht's
+
+            curl_setopt($curl, CURLOPT_URL, $URL);                                              // URL zu den Daten
+            curl_setopt($curl, CURLOPT_POST, false);                                            // Diesesmal kein POST request
+
+            curl_setopt($curl, CURLOPT_USERAGENT, $user_agent);                                 // Hilft bei einer eventuellen Sessionvalidation auf Serverseite
+            curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, 0);                                      // keine Prüfung ob Hostname im Zertifikat
+            curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);                                  // keine Überprüfung des Peerzertifikats
+            curl_setopt($curl, CURLOPT_FOLLOWLOCATION, false);                                  // redirects nicht folgen
+        
+            curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);                                   // Die Antwort bitte als Rückgabewert von curl_exec
+        
+            $headers = [
+                'Content-Type: application/json',
+                'authorization: '.$token
+            ];
+            curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
+        
+            $response = curl_exec($curl);                                                       // ok, jetzt ausführen
+            $curl_errno = curl_errno($curl);
+
+            if ($curl_errno > 0) {
+                $curl_error = curl_error($curl);
+                $msg = "FEHLER: ".$curl_error;
+                $this->_SetAPIupdateInterval(0);                               
+            } else {
+                $json = json_decode($response, true);
+
+                foreach ($json as $name => $value) {
+                    $this->_setIPSvar($vars_api, $name, $value);                    
+                }
+                $msg = "OK";
+            }
+            $this->_setIPSvar($this->InstanceID, "API_GetData Status", $msg);                
+            $this->_popupMessage($msg);
+
+            curl_close($curl);                                                                 // cURL Session beenden
+
+            return $curl_errno;            
+        }
+
+                
         // -----------------------------------------------------
         private function _createIPScategory($parentID, $name){
 
