@@ -194,7 +194,7 @@
 
             $vars_api   = $this->_createIPScategory($this->InstanceID, "Vars (API)");
 
-            $URL_technical = $v1dataurl.."/".$id."/technical-data";
+            $URL_technical = $v1dataurl."/".$id."/technical-data";
 
             return _getAndStoreData($URL_technical, $token, $vars_api);
         }        
