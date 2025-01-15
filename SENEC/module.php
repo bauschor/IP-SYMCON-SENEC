@@ -3,6 +3,7 @@
 *   Dieses Modul basiert auf Infos von
 *   https://documenter.getpostman.com/view/10329335/UVCB9ihZ
 *   https://documenter.getpostman.com/view/10329335/UVCB9ihW
+*   https://www.postman.com/blue-moon-277072/senec-workspace/request/m6l3kql/data-availability
 *
 *   Und der Vorarbeit von https://community.symcon.de/u/oheidinger/summary
 *   siehe hierzu auch https://community.symcon.de/t/senec-home-g2-plus/35997/6
@@ -62,6 +63,7 @@
         * SENEC_API_GetID();
         * SENEC_API_GetData();
         * SENEC_API_GetTechnicalInfos();
+        * SENEC_API_GetMeasurements();
         * SENEC_API_FullCycle();
         * SENEC_LOCAL_GetData();
         * SENEC_LOCAL_ForceCharging();
@@ -197,7 +199,26 @@
             $URL_technical = $v1dataurl."/".$id."/technical-data";
 
             return $this->_getAndStoreData($URL_technical, $token, $vars_api);
-        }        
+        }
+        
+        // -------------------------------------------------------------------------        
+        public function API_GetMeasurements() {
+
+            $user_agent = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_1) AppleWebKit/537.36 (K HTML, like Gecko) Chrome/61.0.3163.100 Safari/537.36';
+
+            $v2dataurl  = $this->ReadPropertyString("SENEC_APIv2_Data_Url");
+            $token      = $this->GetValue("SENEC_API_Token");
+            $id         = $this->GetValue("SENEC_API_ID",);
+
+            $vars_api   = $this->_createIPScategory($this->InstanceID, "Vars (API)");
+
+            $starttime  = mktime(0, 0, 0, 1, 1, date('Y'));
+            $endtime    = mktime(23, 59, 59, 12, 31, date('Y'));
+
+            $URL_history = $v2dataurl."/".$id."/measurements?resolution=YEAR&from=".$starttime."&to=".$endtime";
+
+            return $this->_getAndStoreData($URL_history, $token, $vars_api);
+        }          
 
         // -------------------------------------------------------------------------        
         public function API_FullCycle() {
@@ -213,6 +234,9 @@
             if($this->API_GetData() > 0){
                 return 1;
             }
+            if($this->API_GetMeasurements() > 0){
+                return 1;
+            }                
             return 0;
         }
 

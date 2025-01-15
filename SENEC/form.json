@@ -27,9 +27,10 @@
     [
         { "type": "Button", "label": "API-Token holen", "onClick": "SENEC_API_GetToken($id);" },
         { "type": "Button", "label": "Anlagen-ID abfragen", "onClick": "SENEC_API_GetID($id);" },
-        { "type": "Button", "label": "Daten per SENEC API holen", "onClick": "SENEC_API_GetData($id);" },
-        { "type": "Button", "label": "Technische Infos per SENEC API holen", "onClick": "SENEC_API_GetTechnicalInfos($id);" },        
-        { "type": "Button", "label": "Daten lokal vom SENEC Gerät einlesen", "onClick": "SENEC_LOCAL_GetData($id);" },
+        { "type": "Button", "label": "Anlagen-Infos per SENEC API holen", "onClick": "SENEC_API_GetTechnicalInfos($id);" },        
+        { "type": "Button", "label": "Live-Daten per SENEC API holen", "onClick": "SENEC_API_GetData($id);" },
+        { "type": "Button", "label": "Archivdaten für dieses Jahr per SENEC API holen", "onClick": "SENEC_API_GetMeasurements($id);" },        
+        { "type": "Button", "label": "Live-Daten lokal vom SENEC Gerät einlesen", "onClick": "SENEC_LOCAL_GetData($id);" },
 
         { "type": "ExpansionPanel", "caption": "Ladeverhalten manuell steuern",
             "items": [
