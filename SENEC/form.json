@@ -5,9 +5,9 @@
         { "type": "ValidationTextBox", "name": "SENEC_API_Password", "caption": "Passwort for mein-senec.de" },        
         
         { "type": "ValidationTextBox", "name": "SENEC_API_Login_Url", "caption": "API Login URL", "width": "500px" },
-        { "type": "ValidationTextBox", "name": "SENEC_API_Statistic_Url", "caption": "API Statistic URL" },
-        { "type": "ValidationTextBox", "name": "SENEC_APIv1_Data_Url", "caption": "API v1 Daten URL" },
-        { "type": "ValidationTextBox", "name": "SENEC_APIv2_Data_Url", "caption": "API v2 Daten URL" },
+        { "type": "ValidationTextBox", "name": "SENEC_API_Statistic_Url", "caption": "API Statistic URL", "width": "500px" },
+        { "type": "ValidationTextBox", "name": "SENEC_APIv1_Data_Url", "caption": "API v1 Daten URL", "width": "500px" },
+        { "type": "ValidationTextBox", "name": "SENEC_APIv2_Data_Url", "caption": "API v2 Daten URL", "width": "500px" },
         { "type": "NumberSpinner", "name": "SENEC_API_Data_Update_Interval", "caption": "API Updatezyklus (Minuten)" },
 
 
@@ -29,7 +29,7 @@
         { "type": "Button", "label": "API-Token holen", "onClick": "SENEC_API_GetToken($id);" },
         { "type": "Button", "label": "Anlagen-ID abfragen", "onClick": "SENEC_API_GetID($id);" },
         { "type": "Button", "label": "Daten per SENEC API holen", "onClick": "SENEC_API_GetData($id);" },
-        { "type": "Button", "label": "Technische Infos per SENEC API holen", "onClick": "API_GetTechnicalInfos($id);" },        
+        { "type": "Button", "label": "Technische Infos per SENEC API holen", "onClick": "SENEC_API_GetTechnicalInfos($id);" },        
         { "type": "Button", "label": "Daten lokal vom SENEC Gerät einlesen", "onClick": "SENEC_LOCAL_GetData($id);" },
         { "type": "Button", "label": "Manuelle Ladung starten", "onClick": "SENEC_LOCAL_ForceCharging($id);" },
         { "type": "Button", "label": "Entladen freigeben", "onClick": "SENEC_LOCAL_ProhibitCharging($id);" }

@@ -180,7 +180,7 @@
 
             $URL_dashboard = $v2dataurl."/".$id."/dashboard";
 
-            return _getAndStoreData($URL_dashboard, $token, $vars_api);
+            return $this->_getAndStoreData($URL_dashboard, $token, $vars_api);
         }
 
         // -------------------------------------------------------------------------        
@@ -196,7 +196,7 @@
 
             $URL_technical = $v1dataurl."/".$id."/technical-data";
 
-            return _getAndStoreData($URL_technical, $token, $vars_api);
+            return $this->_getAndStoreData($URL_technical, $token, $vars_api);
         }        
 
         // -------------------------------------------------------------------------        
