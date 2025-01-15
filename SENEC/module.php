@@ -215,7 +215,7 @@
             $starttime  = mktime(0, 0, 0, 1, 1, date('Y'));
             $endtime    = mktime(23, 59, 59, 12, 31, date('Y'));
 
-            $URL_history = $v2dataurl."/".$id."/measurements?resolution=YEAR&from=".$starttime."&to=".$endtime";
+            $URL_history = $v2dataurl."/".$id."/measurements?resolution=YEAR&from=".$starttime."&to=".$endtime;
 
             return $this->_getAndStoreData($URL_history, $token, $vars_api);
         }          
