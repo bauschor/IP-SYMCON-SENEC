@@ -4,16 +4,12 @@
         { "type": "ValidationTextBox", "name": "SENEC_API_Username", "caption": "Username für mein-senec.de" },
         { "type": "ValidationTextBox", "name": "SENEC_API_Password", "caption": "Passwort for mein-senec.de" },        
         
-        { "type": "ValidationTextBox", "name": "SENEC_API_Login_Url", "caption": "API Login URL", "width": "500px" },
-        { "type": "ValidationTextBox", "name": "SENEC_API_Statistic_Url", "caption": "API Statistic URL", "width": "500px" },
-        { "type": "ValidationTextBox", "name": "SENEC_APIv1_Data_Url", "caption": "API v1 Daten URL", "width": "500px" },
-        { "type": "ValidationTextBox", "name": "SENEC_APIv2_Data_Url", "caption": "API v2 Daten URL", "width": "500px" },
-        { "type": "NumberSpinner", "name": "SENEC_API_Data_Update_Interval", "caption": "API Updatezyklus (Minuten)" },
+        { "type": "NumberSpinner", "name": "SENEC_API_Data_Update_Interval", "caption": "API Updatezyklus (Minuten); 0 = niemals" },
 
 
         { "type": "ValidationTextBox", "name": "SENEC_Local_IP", "caption": "IP-Adresse des lokalen SENEC Moduls" },
         { "type": "ValidationTextBox", "name": "SENEC_Local_Query", "caption": "JSON-Request an das lokale SENEC Modul", "width": "900px" , "multiline": "true"},        
-        { "type": "NumberSpinner", "name": "SENEC_Local_Data_Update_Interval", "caption": "lokaler Updatezyklus (Sekunden)" },
+        { "type": "NumberSpinner", "name": "SENEC_Local_Data_Update_Interval", "caption": "lokaler Updatezyklus (Sekunden); 0 = niemals" },
 
 
         { "type": "PopupAlert", "name": "InfoPopup", "visible": false,
