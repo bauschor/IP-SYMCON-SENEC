@@ -371,7 +371,7 @@
                 $json = json_decode($response, true);
 
                 foreach ($json as $name => $value) {
-                    $this->_setIPSvar($vars_api, $name, $value);                    
+                    $this->_setIPSvar($destination, $name, $value);                    
                 }
                 $msg = "OK";
             }
