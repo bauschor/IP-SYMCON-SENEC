@@ -118,9 +118,10 @@
                 $this->_setIPSvar($this->InstanceID, "API_GetToken Status", "OK");                
             }
             curl_close($curl);                                                              // cURL Session beenden
-            $this->_popupMessage($msg);
-
-            return $curl_errno;            
+            // $this->_popupMessage($msg);
+            // return $curl_errno;
+            
+            return($msg);
       	}
 
         // -------------------------------------------------------------------------        
@@ -172,17 +173,21 @@
         // -------------------------------------------------------------------------        
         public function API_GetData() {
 
-            $user_agent = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_1) AppleWebKit/537.36 (K HTML, like Gecko) Chrome/61.0.3163.100 Safari/537.36';
+            $user_agent     = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_1) AppleWebKit/537.36 (K HTML, like Gecko) Chrome/61.0.3163.100 Safari/537.36';
 
-            $v2dataurl  = $this->ReadPropertyString("SENEC_APIv2_Data_Url");
-            $token      = $this->GetValue("SENEC_API_Token");
-            $id         = $this->GetValue("SENEC_API_ID",);
+            $v2dataurl      = $this->ReadPropertyString("SENEC_APIv2_Data_Url");
+            $token          = $this->GetValue("SENEC_API_Token");
+            $id             = $this->GetValue("SENEC_API_ID",);
+            $vars_api       = $this->_createIPScategory($this->InstanceID, "Vars (API)");
 
-            $vars_api   = $this->_createIPScategory($this->InstanceID, "Vars (API)");
+            $URL_dashboard  = $v2dataurl."/".$id."/dashboard";
+            $result         = $this->_getAndStoreData($URL_dashboard, $token, $vars_api);
 
-            $URL_dashboard = $v2dataurl."/".$id."/dashboard";
-
-            return $this->_getAndStoreData($URL_dashboard, $token, $vars_api);
+            if ($result == 0){
+                $minuten = $this->ReadPropertyInteger('SENEC_API_Data_Update_Interval');
+                $this->_SetAPIupdateInterval($minuten);
+            }
+            return $result
         }
 
         // -------------------------------------------------------------------------        
