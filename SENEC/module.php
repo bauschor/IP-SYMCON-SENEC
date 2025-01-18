@@ -275,7 +275,7 @@
             if ($curl_errno > 0) {
                 $curl_error = curl_error($curl);
                 $msg = "FEHLER: ".$curl_error;
-                
+
                 // $this->_SetLALAupdateInterval(0);
                 $LOCALerrorCounter = $this->GetValue("SENEC_Local_ErrorCounter") +1;
                 $this->SetValue("SENEC_Local_ErrorCounter", $LOCALerrorCounter);
@@ -292,7 +292,7 @@
 
             curl_close($curl);                                                      // cURL Session beenden
 
-            return $curl_errno;
+            return $msg;
         }
 
         // -------------------------------------------------------------------------        
