@@ -30,7 +30,7 @@
 
             $this->RegisterVariableString("SENEC_API_Token", "Access Token");
             $this->RegisterVariableString("SENEC_API_ID", "Anlagen ID");
-            $this->RegisterVariableString("SENEC_API_ErrorCounter", "Anzahl API Fehler");
+            $this->RegisterVariableInteger("SENEC_API_ErrorCounter", "Anzahl API Fehler");
 
 
             $this->RegisterPropertyInteger("SENEC_Local_Data_Update_Interval", 10);
@@ -38,7 +38,7 @@
 
             $this->RegisterPropertyString("SENEC_Local_IP", "");
             $this->RegisterPropertyString('SENEC_Local_Query', '{"ENERGY":{"GUI_BAT_DATA_FUEL_CHARGE":"","STAT_STATE":"","GUI_BAT_DATA_POWER":"","GUI_INVERTER_POWER":"","GUI_HOUSE_POW":"","GUI_GRID_POW":"","SAFE_CHARGE_RUNNING":""},"PM1OBJ1":{}}');
-            $this->RegisterVariableString("SENEC_Local_ErrorCounter", "Anzahl lokale Fehler");
+            $this->RegisterVariableInteger("SENEC_Local_ErrorCounter", "Anzahl lokale Fehler");
 
 
             $this->RegisterPropertyString('SENEC_Local_Force_Charging', '{"ENERGY":{"SAFE_CHARGE_FORCE":"u8_01"}');
@@ -230,19 +230,19 @@
 
         // -------------------------------------------------------------------------        
         public function API_FullCycle() {
-            if($this->API_GetToken() > 0){
+            if($this->API_GetToken() != "OK"){
                 return 1;
             }
-            if($this->API_GetID() > 0){
+            if($this->API_GetID() != "OK"){
                 return 1;
             }
-            if($this->API_GetTechnicalInfos() > 0){
+            if($this->API_GetData() != "OK"){
                 return 1;
             }
-            if($this->API_GetData() > 0){
+            if($this->API_GetTechnicalInfos() != "OK"){
                 return 1;
             }
-            if($this->API_GetMeasurements() > 0){
+            if($this->API_GetMeasurements() != "OK"){
                 return 1;
             }                
             return 0;
