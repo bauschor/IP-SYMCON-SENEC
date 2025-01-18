@@ -30,12 +30,16 @@
 
             $this->RegisterVariableString("SENEC_API_Token", "Access Token");
             $this->RegisterVariableString("SENEC_API_ID", "Anlagen ID");
+            $this->RegisterVariableString("SENEC_API_ErrorCounter", "Anzahl API Fehler");
 
+
+            $this->RegisterPropertyInteger("SENEC_Local_Data_Update_Interval", 10);
+            $this->RegisterTimer("SENEC_Local_Update_Data", 0, "SENEC_LOCAL_GetData($this->InstanceID);");
 
             $this->RegisterPropertyString("SENEC_Local_IP", "");
             $this->RegisterPropertyString('SENEC_Local_Query', '{"ENERGY":{"GUI_BAT_DATA_FUEL_CHARGE":"","STAT_STATE":"","GUI_BAT_DATA_POWER":"","GUI_INVERTER_POWER":"","GUI_HOUSE_POW":"","GUI_GRID_POW":"","SAFE_CHARGE_RUNNING":""},"PM1OBJ1":{}}');
-            $this->RegisterPropertyInteger("SENEC_Local_Data_Update_Interval", 10);
-            $this->RegisterTimer("SENEC_Local_Update_Data", 0, "SENEC_LOCAL_GetData($this->InstanceID);");
+            $this->RegisterVariableString("SENEC_Local_ErrorCounter", "Anzahl lokale Fehler");
+
 
             $this->RegisterPropertyString('SENEC_Local_Force_Charging', '{"ENERGY":{"SAFE_CHARGE_FORCE":"u8_01"}');
             $this->RegisterPropertyString('SENEC_Local_Prohibit_Charging', '{"ENERGY":{"SAFE_CHARGE_PROHIBIT":"u8_01"}');
@@ -49,9 +53,11 @@
 
             $minuten = $this->ReadPropertyInteger('SENEC_API_Data_Update_Interval');
             $this->_SetAPIupdateInterval($minuten);
+            $this->SetValue("SENEC_API_ErrorCounter", 0);
 
             $sekunden = $this->ReadPropertyInteger('SENEC_Local_Data_Update_Interval');
             $this->_SetLALAupdateInterval($sekunden);
+            $this->SetValue("SENEC_Local_ErrorCounter", 0);            
         }
  
  
@@ -118,8 +124,6 @@
                 $this->_setIPSvar($this->InstanceID, "API_GetToken Status", "OK");                
             }
             curl_close($curl);                                                              // cURL Session beenden
-            // $this->_popupMessage($msg);
-            // return $curl_errno;
 
             return($msg);
       	}
@@ -165,9 +169,8 @@
                 $this->_setIPSvar($this->InstanceID, "API_GetID Status", "OK");                                           
             }            
             curl_close($curl);                                                              // cURL Session beenden
-            $this->_popupMessage($msg);
-            
-            return $curl_errno;
+
+            return($msg);
         }
 
         // -------------------------------------------------------------------------        
@@ -183,10 +186,10 @@
             $URL_dashboard  = $v2dataurl."/".$id."/dashboard";
             $result         = $this->_getAndStoreData($URL_dashboard, $token, $vars_api);
 
-            if ($result == 0){
-                $minuten = $this->ReadPropertyInteger('SENEC_API_Data_Update_Interval');
-                $this->_SetAPIupdateInterval($minuten);
-            }
+            // if ($result == "OK"){
+            //     $minuten = $this->ReadPropertyInteger('SENEC_API_Data_Update_Interval');
+            //     $this->_SetAPIupdateInterval($minuten);
+            // }
             return $result;
         }
 
@@ -272,7 +275,10 @@
             if ($curl_errno > 0) {
                 $curl_error = curl_error($curl);
                 $msg = "FEHLER: ".$curl_error;
-                $this->_SetLALAupdateInterval(0);        
+                
+                // $this->_SetLALAupdateInterval(0);
+                $LOCALerrorCounter = $this->GetValue("SENEC_Local_ErrorCounter") +1;
+                $this->SetValue("SENEC_Local_ErrorCounter", $LOCALerrorCounter);
             }else{
                 $json = json_decode($response, true);                               // Dekodieren der Antwort
         
@@ -282,7 +288,7 @@
                 $msg = "OK";
             }
             $this->_setIPSvar($this->InstanceID, "LOCAL_GetData Status", $msg);                
-            $this->_popupMessage($msg);            
+            // $this->_popupMessage($msg);
 
             curl_close($curl);                                                      // cURL Session beenden
 
@@ -318,11 +324,11 @@
                 $msg = "Manuelles Laden gestartet";
             }
             $this->_setIPSvar($this->InstanceID, "LOCAL_GetData Status", $msg);
-            $this->_popupMessage($msg);                                              
+            // $this->_popupMessage($msg);                                              
 
             curl_close($curl);                                                      // cURL Session beenden
 
-            return $curl_errno;
+            return $msg;
         }
 
         // -------------------------------------------------------------------------        
@@ -354,12 +360,12 @@
                 $msg = "Manuelles Laden gestoppt";
             }
             $this->_setIPSvar($this->InstanceID, "LOCAL_GetData Status", $msg);                
-            $this->_popupMessage($msg);
+            // $this->_popupMessage($msg);
 
 
             curl_close($curl);                                                      // cURL Session beenden
 
-            return $curl_errno;
+            return $msg;
         }
 
         // ---------------------------------------------------------------------------------------------------------------
@@ -395,7 +401,10 @@
             if ($curl_errno > 0) {
                 $curl_error = curl_error($curl);
                 $msg = "FEHLER: ".$curl_error;
-                $this->_SetAPIupdateInterval(0);                               
+
+                // $this->_SetAPIupdateInterval(0);
+                $APIerrorCounter = $this->GetValue("SENEC_API_ErrorCounter") +1;
+                $this->SetValue("SENEC_API_ErrorCounter", $APIerrorCounter);
             } else {
                 $json = json_decode($response, true);
 
@@ -405,11 +414,11 @@
                 $msg = "OK";
             }
             $this->_setIPSvar($this->InstanceID, "API_GetData Status", $msg);                
-            $this->_popupMessage($msg);
+            // $this->_popupMessage($msg);
 
             curl_close($curl);                                                                 // cURL Session beenden
 
-            return $curl_errno;            
+            return $msg;            
         }
 
                 
