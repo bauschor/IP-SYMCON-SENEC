@@ -120,7 +120,7 @@
             curl_close($curl);                                                              // cURL Session beenden
             // $this->_popupMessage($msg);
             // return $curl_errno;
-            
+
             return($msg);
       	}
 
@@ -187,7 +187,7 @@
                 $minuten = $this->ReadPropertyInteger('SENEC_API_Data_Update_Interval');
                 $this->_SetAPIupdateInterval($minuten);
             }
-            return $result
+            return $result;
         }
 
         // -------------------------------------------------------------------------        
