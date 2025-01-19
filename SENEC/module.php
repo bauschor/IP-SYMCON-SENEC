@@ -120,7 +120,7 @@
             } else {
                 $token = json_decode($response, true)['token'];
     			$this->SetValue("SENEC_API_Token", $token);
-                $msg = "Token erhalten: ".$token;
+                $msg = "OK, Token erhalten: ".$token;
                 $this->_setIPSvar($this->InstanceID, "API_GetToken Status", "OK");                
             }
             curl_close($curl);                                                              // cURL Session beenden
@@ -165,7 +165,7 @@
             } else {
                 $id = json_decode($response, true)[0]['id'];
                 $this->SetValue("SENEC_API_ID", $id);
-                $msg = "Anlagen ID: ".$id;
+                $msg = "OK, Anlagen ID: ".$id;
                 $this->_setIPSvar($this->InstanceID, "API_GetID Status", "OK");                                           
             }            
             curl_close($curl);                                                              // cURL Session beenden
@@ -230,20 +230,20 @@
 
         // -------------------------------------------------------------------------        
         public function API_FullCycle() {
-            if($this->API_GetToken() != "OK"){
+            if(str_contains($this->API_GetToken(), "OK") == false){
                 return 1;
             }
-            if($this->API_GetID() != "OK"){
-                return 1;
+            if(str_contains($this->API_GetID(), "OK") == false){
+                return 2;
             }
             if($this->API_GetData() != "OK"){
-                return 1;
+                return 3;
             }
             if($this->API_GetTechnicalInfos() != "OK"){
-                return 1;
+                return 4;
             }
             if($this->API_GetMeasurements() != "OK"){
-                return 1;
+                return 5;
             }                
             return 0;
         }
