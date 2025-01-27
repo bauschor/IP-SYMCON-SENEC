@@ -220,7 +220,7 @@
 
             $vars_api   = $this->_createIPScategory($this->InstanceID, "Vars (API)");
 
-            $starttime  = mktime(0, 0, 0, 1, 1, date('Y'));
+            $starttime  = mktime(0, 0, 0, 1, 1, date('Y') -1);
             $endtime    = mktime(23, 59, 59, 12, 31, date('Y'));
 
             $URL_history = $v2dataurl."/".$id."/measurements?resolution=YEAR&from=".$starttime."&to=".$endtime;
