@@ -32,6 +32,10 @@
             $this->RegisterVariableString("SENEC_API_ID", "Anlagen ID");
             $this->RegisterVariableInteger("SENEC_API_ErrorCounter", "Anzahl API Fehler");
 
+            $this->RegisterPropertyBoolean ("SENEC_API_TechnicalData_Loop", true);
+            $this->RegisterPropertyBoolean ("SENEC_API_LiveData_Loop", true);
+            $this->RegisterPropertyBoolean ("SENEC_API_Measurements_Loop", true);
+
 
             $this->RegisterPropertyInteger("SENEC_Local_Data_Update_Interval", 10);
             $this->RegisterTimer("SENEC_Local_Update_Data", 0, "SENEC_LOCAL_GetData($this->InstanceID);");
@@ -236,15 +240,21 @@
             if(str_contains($this->API_GetID(), "OK") == false){
                 return 2;
             }
-            if($this->API_GetData() != "OK"){
-                return 3;
+            if($this->ReadPropertyBoolean("SENEC_API_LiveData_Loop") == true) {            
+                if($this->API_GetData() != "OK"){
+                    return 3;
+                }
             }
-            if($this->API_GetTechnicalInfos() != "OK"){
-                return 4;
+            if($this->ReadPropertyBoolean("SENEC_API_TechnicalData_Loop") == true) {
+                if($this->API_GetTechnicalInfos() != "OK"){
+                    return 4;
+                }
             }
-            if($this->API_GetMeasurements() != "OK"){
-                return 5;
-            }                
+            if($this->ReadPropertyBoolean("SENEC_API_Measurements_Loop") == true) {
+                if($this->API_GetMeasurements() != "OK"){
+                    return 5;
+                }
+            }               
             return 0;
         }
 

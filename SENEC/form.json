@@ -5,7 +5,10 @@
             "items": [
                 { "type": "ValidationTextBox", "name": "SENEC_API_Username", "caption": "Username für mein-senec.de" },
                 { "type": "ValidationTextBox", "name": "SENEC_API_Password", "caption": "Passwort for mein-senec.de" },
-                { "type": "NumberSpinner", "name": "SENEC_API_Data_Update_Interval", "caption": "API Updatezyklus (Minuten); 0 = niemals" }
+                { "type": "NumberSpinner", "name": "SENEC_API_Data_Update_Interval", "caption": "API Updatezyklus (Minuten); 0 = niemals" },
+                { "type": "CheckBox", "name": "SENEC_API_TechnicalData_Loop", "caption": "Anlagen-Infos zyklisch abfragen" },
+                { "type": "CheckBox", "name": "SENEC_API_LiveData_Loop", "caption": "Livedaten zyklisch abfragen" },
+                { "type": "CheckBox", "name": "SENEC_API_Measurements_Loop", "caption": "Historische Daten zyklisch abfragen" }
             ]
         },
         { "type": "ExpansionPanel", "caption": "Einstellungen für den lokalen Zugriff auf den SENEC Speicher",
@@ -29,7 +32,7 @@
         { "type": "Button", "label": "Anlagen-ID abfragen", "onClick": "echo(SENEC_API_GetID($id));" },
         { "type": "Button", "label": "Anlagen-Infos per SENEC API holen", "onClick": "echo(SENEC_API_GetTechnicalInfos($id));" },        
         { "type": "Button", "label": "Live-Daten per SENEC API holen", "onClick": "echo(SENEC_API_GetData($id));" },
-        { "type": "Button", "label": "Archivdaten für dieses Jahr per SENEC API holen", "onClick": "echo(SENEC_API_GetMeasurements($id));" },
+        { "type": "Button", "label": "Archivdaten für das vergangene und das aktuelle Jahr per SENEC API holen", "onClick": "echo(SENEC_API_GetMeasurements($id));" },
         { "type": "Button", "label": "Live-Daten lokal vom SENEC Gerät einlesen", "onClick": "echo(SENEC_LOCAL_GetData($id));" },
 
         { "type": "ExpansionPanel", "caption": "Ladeverhalten manuell steuern",
