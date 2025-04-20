@@ -120,7 +120,11 @@
                 $curl_error = curl_error($curl);
                 $msg = "FEHLER: ".$curl_error;
                 $this->_setIPSvar($this->InstanceID, "API_GetToken Status", $msg);
-                $this->_SetAPIupdateInterval(0);                
+
+//                $this->_SetAPIupdateInterval(0);                                            // Bei Fehler kein weiteres Update mehr
+                $APIerrorCounter = $this->GetValue("SENEC_API_ErrorCounter") +1;
+                $this->SetValue("SENEC_API_ErrorCounter", $APIerrorCounter);                
+
             } else {
                 $token = json_decode($response, true)['token'];
     			$this->SetValue("SENEC_API_Token", $token);
@@ -165,7 +169,10 @@
                 $curl_error = curl_error($curl);
                 $msg = "FEHLER: ".$curl_error;
                 $this->_setIPSvar($this->InstanceID, "API_GetID Status", $msg);
-                $this->_SetAPIupdateInterval(0);                                        
+
+//                $this->_SetAPIupdateInterval(0);                                            // Bei Fehler kein weiteres Update mehr
+                $APIerrorCounter = $this->GetValue("SENEC_API_ErrorCounter") +1;
+                $this->SetValue("SENEC_API_ErrorCounter", $APIerrorCounter);                
             } else {
                 $id = json_decode($response, true)[0]['id'];
                 $this->SetValue("SENEC_API_ID", $id);
@@ -412,7 +419,7 @@
                 $curl_error = curl_error($curl);
                 $msg = "FEHLER: ".$curl_error;
 
-                // $this->_SetAPIupdateInterval(0);
+//                $this->_SetAPIupdateInterval(0);                                                // Bei Fehler kein weiteres Update mehr
                 $APIerrorCounter = $this->GetValue("SENEC_API_ErrorCounter") +1;
                 $this->SetValue("SENEC_API_ErrorCounter", $APIerrorCounter);
             } else {
