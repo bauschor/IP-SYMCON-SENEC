@@ -113,13 +113,14 @@
 
             curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
 
-            $response = curl_exec($curl);                                                   // ok, jetzt ausführen
+            $response = curl_exec($curl);                                                                  // ok, jetzt ausführen
             $curl_errno = curl_errno($curl);
 
             if ($curl_errno > 0) {
                 $curl_error = curl_error($curl);
                 $msg = "FEHLER: ".$curl_error;
                 $this->_setIPSvar($this->InstanceID, "API_GetToken Status", $msg);
+                $this->LogMessage("API_GetToken-".$msg, KL_ERROR);                                                 // Eintrag ins SYMCON Logfile
 
 //                $this->_SetAPIupdateInterval(0);                                            // Bei Fehler kein weiteres Update mehr
                 $APIerrorCounter = $this->GetValue("SENEC_API_ErrorCounter") +1;
@@ -131,7 +132,7 @@
                 $msg = "OK, Token erhalten: ".$token;
                 $this->_setIPSvar($this->InstanceID, "API_GetToken Status", "OK");                
             }
-            curl_close($curl);                                                              // cURL Session beenden
+            curl_close($curl);                                                                             // cURL Session beenden
 
             return($msg);
       	}
@@ -169,6 +170,7 @@
                 $curl_error = curl_error($curl);
                 $msg = "FEHLER: ".$curl_error;
                 $this->_setIPSvar($this->InstanceID, "API_GetID Status", $msg);
+                $this->LogMessage("API_GetID-".$msg, KL_ERROR);                                                    // Eintrag ins SYMCON Logfile                
 
 //                $this->_SetAPIupdateInterval(0);                                            // Bei Fehler kein weiteres Update mehr
                 $APIerrorCounter = $this->GetValue("SENEC_API_ErrorCounter") +1;
@@ -286,18 +288,19 @@
             curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);                      // keine Überprüfung des Peerzertifikats
             curl_setopt($curl, CURLOPT_FOLLOWLOCATION, false);                      // Keinen redirects folgen
         
-            $response = curl_exec($curl);                                           // Hier das Ergebnis
+            $response = curl_exec($curl);                                                          // Hier das Ergebnis
             $curl_errno = curl_errno($curl);
 
             if ($curl_errno > 0) {
                 $curl_error = curl_error($curl);
                 $msg = "FEHLER: ".$curl_error;
+                $this->LogMessage("LOCAL_GetData-".$msg, KL_ERROR);                                        // Eintrag ins SYMCON Logfile
 
                 // $this->_SetLALAupdateInterval(0);
                 $LOCALerrorCounter = $this->GetValue("SENEC_Local_ErrorCounter") +1;
                 $this->SetValue("SENEC_Local_ErrorCounter", $LOCALerrorCounter);
             }else{
-                $json = json_decode($response, true);                               // Dekodieren der Antwort
+                $json = json_decode($response, true);                                   // Dekodieren der Antwort
         
                 foreach ($json as $name => $value) {
                     $this->_setIPSvarLALA($vars_lala, $name, $value);                    
@@ -306,13 +309,15 @@
             }
             $this->_setIPSvar($this->InstanceID, "LOCAL_GetData Status", $msg);
             // $this->_popupMessage($msg);
-            $this->LogMessage("KL_DEBUG: ".$msg, KL_DEBUG);                                    // Eintrag ins SYMCON Logfile
-            $this->LogMessage("KL_ERROR: ".$msg, KL_ERROR);                                    // Eintrag ins SYMCON Logfile
-            $this->LogMessage("KL_MESSAGE: ".$msg, KL_MESSAGE);                                    // Eintrag ins SYMCON Logfile
-            $this->LogMessage("KL_NOTIFY: ".$msg, KL_NOTIFY);                                    // Eintrag ins SYMCON Logfile
-            $this->LogMessage("KL_WARNING: ".$msg, KL_WARNING);                                    // Eintrag ins SYMCON Logfile
 
-//            parent::SendDebug("LOCAL_GetData", (string) $msg, 0);
+//            $this->LogMessage("KL_DEBUG: ".$msg, KL_DEBUG);                                       // Eintrag ins SYMCON Logfile
+//            $this->LogMessage("KL_ERROR: ".$msg, KL_ERROR);                                       // Eintrag ins SYMCON Logfile
+//            $this->LogMessage("KL_MESSAGE: ".$msg, KL_MESSAGE);                                   // Eintrag ins SYMCON Logfile
+//            $this->LogMessage("KL_NOTIFY: ".$msg, KL_NOTIFY);                                     // Eintrag ins SYMCON Logfile
+//            $this->LogMessage("KL_WARNING: "$msg, KL_WARNING);                                    // Eintrag ins SYMCON Logfile
+
+//            parent::SendDebug("LOCAL_GetData", (string) $msg, 0);                                 // Befüllt das Debug-Fenster des Moduls
+
             curl_close($curl);                                                      // cURL Session beenden
 
             return $msg;
@@ -337,19 +342,20 @@
             curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);                      // keine Überprüfung des Peerzertifikats
             curl_setopt($curl, CURLOPT_FOLLOWLOCATION, false);                      // Keinen redirects folgen
         
-            $response = curl_exec($curl);                                           // Hier das Ergebnis
+            $response = curl_exec($curl);                                                          // Hier das Ergebnis
             $curl_errno = curl_errno($curl);
 
             if ($curl_errno > 0) {
                 $curl_error = curl_error($curl);
                 $msg = "FEHLER: ".$curl_error;
+                $this->LogMessage("LOCAL_ForceCharging-".$msg, KL_ERROR);                                  // Eintrag ins SYMCON Logfile
             }else{
                 $msg = "Manuelles Laden gestartet";
             }
             $this->_setIPSvar($this->InstanceID, "LOCAL_GetData Status", $msg);
             // $this->_popupMessage($msg);                                              
 
-            curl_close($curl);                                                      // cURL Session beenden
+            curl_close($curl);                                                                     // cURL Session beenden
 
             return $msg;
         }
@@ -373,12 +379,13 @@
             curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);                      // keine Überprüfung des Peerzertifikats
             curl_setopt($curl, CURLOPT_FOLLOWLOCATION, false);                      // Keinen redirects folgen
         
-            $response = curl_exec($curl);                                           // Hier das Ergebnis
+            $response = curl_exec($curl);                                                          // Hier das Ergebnis
             $curl_errno = curl_errno($curl);
 
             if ($curl_errno > 0) {
                 $curl_error = curl_error($curl);
                 $msg = "FEHLER: ".$curl_error;
+                $this->LogMessage("LOCAL_ProhibitCharging-".$msg, KL_ERROR);                               // Eintrag ins SYMCON Logfile
             }else{
                 $msg = "Manuelles Laden gestoppt";
             }
@@ -386,7 +393,7 @@
             // $this->_popupMessage($msg);
 
 
-            curl_close($curl);                                                      // cURL Session beenden
+            curl_close($curl);                                                                     // cURL Session beenden
 
             return $msg;
         }
@@ -400,7 +407,7 @@
 
             $user_agent  = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_1) AppleWebKit/537.36 (K HTML, like Gecko) Chrome/61.0.3163.100 Safari/537.36';
 
-            $curl = curl_init();                                                                // los geht's
+            $curl = curl_init();                                                                                       // los geht's
 
             curl_setopt($curl, CURLOPT_URL, $URL);                                              // URL zu den Daten
             curl_setopt($curl, CURLOPT_POST, false);                                            // Diesesmal kein POST request
@@ -418,12 +425,13 @@
             ];
             curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
         
-            $response = curl_exec($curl);                                                       // ok, jetzt ausführen
+            $response = curl_exec($curl);                                                                      // ok, jetzt ausführen
             $curl_errno = curl_errno($curl);
 
             if ($curl_errno > 0) {
                 $curl_error = curl_error($curl);
                 $msg = "FEHLER: ".$curl_error;
+                $this->LogMessage("getAndStoreData-".$msg, KL_ERROR);                                                  // Eintrag ins SYMCON Logfile
 
 //                $this->_SetAPIupdateInterval(0);                                                // Bei Fehler kein weiteres Update mehr
                 $APIerrorCounter = $this->GetValue("SENEC_API_ErrorCounter") +1;
@@ -439,7 +447,7 @@
             $this->_setIPSvar($this->InstanceID, "API_GetData Status", $msg);                
             // $this->_popupMessage($msg);
 
-            curl_close($curl);                                                                 // cURL Session beenden
+            curl_close($curl);                                                                                 // cURL Session beenden
 
             return $msg;            
         }
