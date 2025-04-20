@@ -306,8 +306,13 @@
             }
             $this->_setIPSvar($this->InstanceID, "LOCAL_GetData Status", $msg);
             // $this->_popupMessage($msg);
-            $this->LogMessage($msg, KL_MESSAGE);                                    // Eintrag ins SYMCON Logfile
-            parent::SendDebug("SENEC", (string) $msg, 0);
+            $this->LogMessage("KL_DEBUG: ".$msg, KL_DEBUG);                                    // Eintrag ins SYMCON Logfile
+            $this->LogMessage("KL_ERROR: ".$msg, KL_ERROR);                                    // Eintrag ins SYMCON Logfile
+            $this->LogMessage("KL_MESSAGE: ".$msg, KL_MESSAGE);                                    // Eintrag ins SYMCON Logfile
+            $this->LogMessage("KL_NOTIFY: ".$msg, KL_NOTIFY);                                    // Eintrag ins SYMCON Logfile
+            $this->LogMessage("KL_WARNING: ".$msg, KL_WARNING);                                    // Eintrag ins SYMCON Logfile
+
+//            parent::SendDebug("LOCAL_GetData", (string) $msg, 0);
             curl_close($curl);                                                      // cURL Session beenden
 
             return $msg;
