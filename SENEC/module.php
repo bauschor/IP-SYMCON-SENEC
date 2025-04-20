@@ -62,6 +62,8 @@
             $sekunden = $this->ReadPropertyInteger('SENEC_Local_Data_Update_Interval');
             $this->_SetLALAupdateInterval($sekunden);
             $this->SetValue("SENEC_Local_ErrorCounter", 0);
+
+            $this->LogMessage("Module initialized", KL_NOTIFY);                                     // Eintrag ins SYMCON Logfile   (landet auch in "Status")
         }
  
  
