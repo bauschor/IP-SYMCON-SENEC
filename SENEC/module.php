@@ -61,7 +61,7 @@
 
             $sekunden = $this->ReadPropertyInteger('SENEC_Local_Data_Update_Interval');
             $this->_SetLALAupdateInterval($sekunden);
-            $this->SetValue("SENEC_Local_ErrorCounter", 0);            
+            $this->SetValue("SENEC_Local_ErrorCounter", 0);
         }
  
  
@@ -304,8 +304,9 @@
                 }
                 $msg = "OK";
             }
-            $this->_setIPSvar($this->InstanceID, "LOCAL_GetData Status", $msg);                
+            $this->_setIPSvar($this->InstanceID, "LOCAL_GetData Status", $msg);
             // $this->_popupMessage($msg);
+            $this->LogMessage($msg, KL_MESSAGE);                                    // Eintrag ins SYMCON Logfile
 
             curl_close($curl);                                                      // cURL Session beenden
 
