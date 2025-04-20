@@ -307,7 +307,7 @@
             $this->_setIPSvar($this->InstanceID, "LOCAL_GetData Status", $msg);
             // $this->_popupMessage($msg);
             $this->LogMessage($msg, KL_MESSAGE);                                    // Eintrag ins SYMCON Logfile
-
+            parent::SendDebug("SENEC", (string) $msg, 0);
             curl_close($curl);                                                      // cURL Session beenden
 
             return $msg;
