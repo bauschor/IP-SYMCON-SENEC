@@ -310,11 +310,11 @@
             $this->_setIPSvar($this->InstanceID, "LOCAL_GetData Status", $msg);
             // $this->_popupMessage($msg);
 
-//            $this->LogMessage("KL_DEBUG: ".$msg, KL_DEBUG);                                       // Eintrag ins SYMCON Logfile
-//            $this->LogMessage("KL_ERROR: ".$msg, KL_ERROR);                                       // Eintrag ins SYMCON Logfile
-//            $this->LogMessage("KL_MESSAGE: ".$msg, KL_MESSAGE);                                   // Eintrag ins SYMCON Logfile
-//            $this->LogMessage("KL_NOTIFY: ".$msg, KL_NOTIFY);                                     // Eintrag ins SYMCON Logfile
-//            $this->LogMessage("KL_WARNING: "$msg, KL_WARNING);                                    // Eintrag ins SYMCON Logfile
+//            $this->LogMessage("KL_DEBUG: ".$msg, KL_DEBUG);                                       // Eintrag ins SYMCON Logfile   (nur bei "Meldungen" sichtbar)
+//            $this->LogMessage("KL_MESSAGE: ".$msg, KL_MESSAGE);                                   // Eintrag ins SYMCON Logfile   (nur bei "Meldungen" sichtbar)
+//            $this->LogMessage("KL_ERROR: ".$msg, KL_ERROR);                                       // Eintrag ins SYMCON Logfile   (landet auch in "Status")
+//            $this->LogMessage("KL_NOTIFY: ".$msg, KL_NOTIFY);                                     // Eintrag ins SYMCON Logfile   (landet auch in "Status")
+//            $this->LogMessage("KL_WARNING: "$msg, KL_WARNING);                                    // Eintrag ins SYMCON Logfile   (landet auch in "Status")
 
 //            parent::SendDebug("LOCAL_GetData", (string) $msg, 0);                                 // Befüllt das Debug-Fenster des Moduls
 
