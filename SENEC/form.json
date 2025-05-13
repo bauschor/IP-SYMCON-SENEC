@@ -20,9 +20,13 @@
         },
         { "type": "ExpansionPanel", "caption": "Einstellungen für den lokalen Zugriff auf den SENEC Speicher",
             "items": [
-                { "type": "ValidationTextBox", "name": "SENEC_Local_IP", "caption": "IP-Adresse des lokalen SENEC Moduls" },
-                { "type": "ValidationTextBox", "name": "SENEC_Local_Query", "caption": "JSON-Request an das lokale SENEC Modul", "width": "900px" , "multiline": "true"},        
-                { "type": "NumberSpinner", "name": "SENEC_Local_Data_Update_Interval", "caption": "lokaler Updatezyklus (Sekunden); 0 = niemals" }
+                { "type": "ValidationTextBox", "name": "SENEC_Local_IP", "caption": "IP-Adresse des lokalen SENEC Moduls" },     
+                { "type": "NumberSpinner", "name": "SENEC_Local_Data_Update_Interval", "caption": "lokaler Updatezyklus (Sekunden); 0 = niemals" },
+                { "type": "ExpansionPanel", "caption": "Experten-Einstellungen",
+                    "items": [
+                        { "type": "ValidationTextBox", "name": "SENEC_Local_Query", "caption": "JSON-Request an das lokale SENEC Modul", "width": "900px" , "multiline": "true"}
+                    ]
+                }
             ]
         },
         { "type": "PopupAlert", "name": "InfoPopup", "visible": false,
