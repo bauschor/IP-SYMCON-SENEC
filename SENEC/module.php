@@ -20,7 +20,7 @@
             $this->RegisterPropertyString("SENEC_API_Username", "");
 	        $this->RegisterPropertyString("SENEC_API_Password", "");
 		
-            $this->RegisterPropertyString("SENEC_API_Login_Url",     "https://app-gateway.prod.senec.dev/v1/senec/login");
+            $this->RegisterPropertyString("SENEC_APIv1_Login_Url",   "https://app-gateway.prod.senec.dev/v1/senec/login");
             $this->RegisterPropertyString("SENEC_APIv1_Data_Url",    "https://app-gateway.prod.senec.dev/v1/senec/systems");
             $this->RegisterPropertyString("SENEC_APIv2_Data_Url",    "https://app-gateway.prod.senec.dev/v2/senec/systems");
 
@@ -86,7 +86,7 @@
 
             $user_agent = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_1) AppleWebKit/537.36 (K HTML, like Gecko) Chrome/61.0.3163.100 Safari/537.36';
 
-            $loginurl   = $this->ReadPropertyString("SENEC_API_Login_Url");
+            $loginurl   = $this->ReadPropertyString("SENEC_APIv1_Login_Url");
             $username   = $this->ReadPropertyString("SENEC_API_Username");            
             $password   = $this->ReadPropertyString("SENEC_API_Password");            
 
