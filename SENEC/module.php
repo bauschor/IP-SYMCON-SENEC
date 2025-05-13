@@ -3,6 +3,7 @@
 *   Dieses Modul basiert auf Infos von
 *   https://documenter.getpostman.com/view/10329335/UVCB9ihZ
 *   https://documenter.getpostman.com/view/10329335/UVCB9ihW
+*   https://www.postman.com/blue-moon-277072/senec-workspace/request/m6l3kql/data-availability
 *
 *   Und der Vorarbeit von https://community.symcon.de/u/oheidinger/summary
 *   siehe hierzu auch https://community.symcon.de/t/senec-home-g2-plus/35997/6
@@ -19,22 +20,32 @@
             $this->RegisterPropertyString("SENEC_API_Username", "");
 	        $this->RegisterPropertyString("SENEC_API_Password", "");
 		
-            $this->RegisterPropertyString("SENEC_API_Base_Url", "https://app-gateway-prod.senecops.com/v1/senec");
-            $this->RegisterPropertyString("SENEC_API_Login_Stub", "login");
-            $this->RegisterPropertyString("SENEC_API_Anlagen_Stub", "anlagen");
-            $this->RegisterPropertyString("SENEC_API_Data_Stub", "dashboard");
+            $this->RegisterPropertyString("SENEC_APIv1_Login_Url",   "https://app-gateway.prod.senec.dev/v1/senec/login");
+            $this->RegisterPropertyString("SENEC_APIv1_Data_Url",    "https://app-gateway.prod.senec.dev/v1/senec/systems");
+            $this->RegisterPropertyString("SENEC_APIv2_Data_Url",    "https://app-gateway.prod.senec.dev/v2/senec/systems");
 
             $this->RegisterPropertyInteger("SENEC_API_Data_Update_Interval", 6);
             $this->RegisterTimer("SENEC_API_Update_Data", 0, "SENEC_API_FullCycle($this->InstanceID);");
 
             $this->RegisterVariableString("SENEC_API_Token", "Access Token");
             $this->RegisterVariableString("SENEC_API_ID", "Anlagen ID");
+            $this->RegisterVariableInteger("SENEC_API_ErrorCounter", "Anzahl API Fehler");
+
+            $this->RegisterPropertyBoolean ("SENEC_API_TechnicalData_Loop", true);
+            $this->RegisterPropertyBoolean ("SENEC_API_LiveData_Loop", true);
+            $this->RegisterPropertyBoolean ("SENEC_API_Measurements_Loop", true);
 
 
-            $this->RegisterPropertyString("SENEC_Local_IP", "");
-            $this->RegisterPropertyString('SENEC_Local_Query', '{"ENERGY":{"GUI_BAT_DATA_FUEL_CHARGE":"","STAT_STATE":"","GUI_BAT_DATA_POWER":"","GUI_INVERTER_POWER":"","GUI_HOUSE_POW":"","GUI_GRID_POW":""},"PM1OBJ1":{}}');
             $this->RegisterPropertyInteger("SENEC_Local_Data_Update_Interval", 10);
             $this->RegisterTimer("SENEC_Local_Update_Data", 0, "SENEC_LOCAL_GetData($this->InstanceID);");
+
+            $this->RegisterPropertyString("SENEC_Local_IP", "");
+            $this->RegisterPropertyString('SENEC_Local_Query', '{"ENERGY":{"GUI_BAT_DATA_FUEL_CHARGE":"","STAT_STATE":"","GUI_BAT_DATA_POWER":"","GUI_INVERTER_POWER":"","GUI_HOUSE_POW":"","GUI_GRID_POW":"","SAFE_CHARGE_RUNNING":""},"PM1OBJ1":{}}');
+            $this->RegisterVariableInteger("SENEC_Local_ErrorCounter", "Anzahl lokale Fehler");
+
+
+            $this->RegisterPropertyString('SENEC_Local_Force_Charging', '{"ENERGY":{"SAFE_CHARGE_FORCE":"u8_01"}');
+            $this->RegisterPropertyString('SENEC_Local_Prohibit_Charging', '{"ENERGY":{"SAFE_CHARGE_PROHIBIT":"u8_01"}');
         }   
 		
 
@@ -45,9 +56,13 @@
 
             $minuten = $this->ReadPropertyInteger('SENEC_API_Data_Update_Interval');
             $this->_SetAPIupdateInterval($minuten);
+            $this->SetValue("SENEC_API_ErrorCounter", 0);
 
             $sekunden = $this->ReadPropertyInteger('SENEC_Local_Data_Update_Interval');
             $this->_SetLALAupdateInterval($sekunden);
+            $this->SetValue("SENEC_Local_ErrorCounter", 0);
+
+            $this->LogMessage("Module initialized", KL_NOTIFY);                                     // Eintrag ins SYMCON Logfile   (landet auch in "Status")
         }
  
  
@@ -58,17 +73,20 @@
         * SENEC_API_GetToken();
         * SENEC_API_GetID();
         * SENEC_API_GetData();
+        * SENEC_API_GetTechnicalInfos();
+        * SENEC_API_GetMeasurements();
         * SENEC_API_FullCycle();
         * SENEC_LOCAL_GetData();
+        * SENEC_LOCAL_ForceCharging();
+        * SENEC_LOCAL_ProhibitCharging();
         **/
 
         // -------------------------------------------------------------------------        
         public function API_GetToken() {
 
-            $user_agent     = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_1) AppleWebKit/537.36 (K HTML, like Gecko) Chrome/61.0.3163.100 Safari/537.36';
+            $user_agent = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_1) AppleWebKit/537.36 (K HTML, like Gecko) Chrome/61.0.3163.100 Safari/537.36';
 
-            $baseurl    = $this->ReadPropertyString("SENEC_API_Base_Url");
-            $loginstub  = $this->ReadPropertyString("SENEC_API_Login_Stub");
+            $loginurl   = $this->ReadPropertyString("SENEC_APIv1_Login_Url");
             $username   = $this->ReadPropertyString("SENEC_API_Username");            
             $password   = $this->ReadPropertyString("SENEC_API_Password");            
 
@@ -79,7 +97,7 @@
 
             $curl = curl_init();                                                            // los geht's
 
-            curl_setopt($curl, CURLOPT_URL, $baseurl."/".$loginstub);                       // URL zum Loginformular
+            curl_setopt($curl, CURLOPT_URL, $loginurl);                                     // URL zum Loginformular
             curl_setopt($curl, CURLOPT_POST, true);                                         // Ein POST request soll es werden
             curl_setopt($curl, CURLOPT_POSTFIELDS, $credentials);                           // Die Infos als JSON Body schicken
             
@@ -96,38 +114,41 @@
 
             curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
 
-            $response = curl_exec($curl);                                                   // ok, jetzt ausführen
+            $response = curl_exec($curl);                                                                  // ok, jetzt ausführen
             $curl_errno = curl_errno($curl);
 
             if ($curl_errno > 0) {
                 $curl_error = curl_error($curl);
                 $msg = "FEHLER: ".$curl_error;
                 $this->_setIPSvar($this->InstanceID, "API_GetToken Status", $msg);
-                $this->_SetAPIupdateInterval(0);                
+                $this->LogMessage("API_GetToken-".$msg, KL_ERROR);                                                 // Eintrag ins SYMCON Logfile
+
+//                $this->_SetAPIupdateInterval(0);                                            // Bei Fehler kein weiteres Update mehr
+                $APIerrorCounter = $this->GetValue("SENEC_API_ErrorCounter") +1;
+                $this->SetValue("SENEC_API_ErrorCounter", $APIerrorCounter);                
+
             } else {
                 $token = json_decode($response, true)['token'];
     			$this->SetValue("SENEC_API_Token", $token);
-                $msg = "Token erhalten: ".$token;
+                $msg = "OK, Token erhalten: ".$token;
                 $this->_setIPSvar($this->InstanceID, "API_GetToken Status", "OK");                
             }
-            curl_close($curl);                                                              // cURL Session beenden
-            $this->_popupMessage($msg);
+            curl_close($curl);                                                                             // cURL Session beenden
 
-            return $curl_errno;            
+            return($msg);
       	}
 
         // -------------------------------------------------------------------------        
         public function API_GetID() {
 
-            $user_agent     = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_1) AppleWebKit/537.36 (K HTML, like Gecko) Chrome/61.0.3163.100 Safari/537.36';
+            $user_agent  = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_1) AppleWebKit/537.36 (K HTML, like Gecko) Chrome/61.0.3163.100 Safari/537.36';
 
-            $baseurl        = $this->ReadPropertyString("SENEC_API_Base_Url");
-            $anlagenstub    = $this->ReadPropertyString("SENEC_API_Anlagen_Stub");
-            $token          = $this->GetValue("SENEC_API_Token");
+            $anlagenurl  = $this->ReadPropertyString("SENEC_APIv1_Data_Url");
+            $token       = $this->GetValue("SENEC_API_Token");
 
             $curl = curl_init();                                                            // los geht's
 
-            curl_setopt($curl, CURLOPT_URL, $baseurl."/".$anlagenstub);                     // URL zu den Anlageninfos
+            curl_setopt($curl, CURLOPT_URL, $anlagenurl);                                   // URL zu den Anlageninfos
             curl_setopt($curl, CURLOPT_POST, false);                                        // Diesesmal kein POST request
 
             curl_setopt($curl, CURLOPT_USERAGENT, $user_agent);                             // Hilft bei einer eventuellen Sessionvalidation auf Serverseite
@@ -150,17 +171,20 @@
                 $curl_error = curl_error($curl);
                 $msg = "FEHLER: ".$curl_error;
                 $this->_setIPSvar($this->InstanceID, "API_GetID Status", $msg);
-                $this->_SetAPIupdateInterval(0);                                        
+                $this->LogMessage("API_GetID-".$msg, KL_ERROR);                                                    // Eintrag ins SYMCON Logfile                
+
+//                $this->_SetAPIupdateInterval(0);                                            // Bei Fehler kein weiteres Update mehr
+                $APIerrorCounter = $this->GetValue("SENEC_API_ErrorCounter") +1;
+                $this->SetValue("SENEC_API_ErrorCounter", $APIerrorCounter);                
             } else {
                 $id = json_decode($response, true)[0]['id'];
                 $this->SetValue("SENEC_API_ID", $id);
-                $msg = "Anlagen ID: ".$id;
+                $msg = "OK, Anlagen ID: ".$id;
                 $this->_setIPSvar($this->InstanceID, "API_GetID Status", "OK");                                           
             }            
             curl_close($curl);                                                              // cURL Session beenden
-            $this->_popupMessage($msg);
-            
-            return $curl_errno;
+
+            return($msg);
         }
 
         // -------------------------------------------------------------------------        
@@ -168,66 +192,79 @@
 
             $user_agent     = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_1) AppleWebKit/537.36 (K HTML, like Gecko) Chrome/61.0.3163.100 Safari/537.36';
 
-            $baseurl        = $this->ReadPropertyString("SENEC_API_Base_Url");
-            $anlagenstub    = $this->ReadPropertyString("SENEC_API_Anlagen_Stub");
-            $datastub       = $this->ReadPropertyString("SENEC_API_Data_Stub");
+            $v2dataurl      = $this->ReadPropertyString("SENEC_APIv2_Data_Url");
             $token          = $this->GetValue("SENEC_API_Token");
             $id             = $this->GetValue("SENEC_API_ID",);
+            $vars_api       = $this->_createIPScategory($this->InstanceID, "Vars (API)");
 
-            $vars_api = $this->_createIPScategory($this->InstanceID, "Vars (API)");
+            $URL_dashboard  = $v2dataurl."/".$id."/dashboard";
+            $result         = $this->_getAndStoreData($URL_dashboard, $token, $vars_api);
 
-
-            $curl = curl_init();                                                                // los geht's
-
-            curl_setopt($curl, CURLOPT_URL, $baseurl."/".$anlagenstub."/".$id."/".$datastub);   // URL zu den Daten
-            curl_setopt($curl, CURLOPT_POST, false);                                            // Diesesmal kein POST request
-
-            curl_setopt($curl, CURLOPT_USERAGENT, $user_agent);                                 // Hilft bei einer eventuellen Sessionvalidation auf Serverseite
-            curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, 0);                                      // keine Prüfung ob Hostname im Zertifikat
-            curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);                                  // keine Überprüfung des Peerzertifikats
-            curl_setopt($curl, CURLOPT_FOLLOWLOCATION, false);                                  // redirects nicht folgen
-        
-            curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);                                   // Die Antwort bitte als Rückgabewert von curl_exec
-        
-            $headers = [
-                'Content-Type: application/json',
-                'authorization: '.$token
-            ];
-            curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
-        
-            $response = curl_exec($curl);                                                       // ok, jetzt ausführen
-            $curl_errno = curl_errno($curl);
-
-            if ($curl_errno > 0) {
-                $curl_error = curl_error($curl);
-                $msg = "FEHLER: ".$curl_error;
-                $this->_setIPSvar($this->InstanceID, "API_GetData Status", $msg);                
-                $this->_popupMessage($msg);
-                $this->_SetAPIupdateInterval(0);                               
-            } else {
-                $json = json_decode($response, true);
-
-                foreach ($json as $name => $value) {
-                    $this->_setIPSvar($vars_api, $name, $value);                    
-                }
-                $this->_setIPSvar($this->InstanceID, "API_GetData Status", "OK");                                
-            }
-            curl_close($curl);                                                                 // cURL Session beenden
-
-            return $curl_errno;            
+            // if ($result == "OK"){
+            //     $minuten = $this->ReadPropertyInteger('SENEC_API_Data_Update_Interval');
+            //     $this->_SetAPIupdateInterval($minuten);
+            // }
+            return $result;
         }
 
         // -------------------------------------------------------------------------        
+        public function API_GetTechnicalInfos() {
+
+            $user_agent = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_1) AppleWebKit/537.36 (K HTML, like Gecko) Chrome/61.0.3163.100 Safari/537.36';
+
+            $v1dataurl  = $this->ReadPropertyString("SENEC_APIv1_Data_Url");
+            $token      = $this->GetValue("SENEC_API_Token");
+            $id         = $this->GetValue("SENEC_API_ID",);
+
+            $vars_api   = $this->_createIPScategory($this->InstanceID, "Vars (API)");
+
+            $URL_technical = $v1dataurl."/".$id."/technical-data";
+
+            return $this->_getAndStoreData($URL_technical, $token, $vars_api);
+        }
+        
+        // -------------------------------------------------------------------------        
+        public function API_GetMeasurements() {
+
+            $user_agent = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_1) AppleWebKit/537.36 (K HTML, like Gecko) Chrome/61.0.3163.100 Safari/537.36';
+
+            $v2dataurl  = $this->ReadPropertyString("SENEC_APIv2_Data_Url");
+            $token      = $this->GetValue("SENEC_API_Token");
+            $id         = $this->GetValue("SENEC_API_ID",);
+
+            $vars_api   = $this->_createIPScategory($this->InstanceID, "Vars (API)");
+
+            $starttime  = mktime(0, 0, 0, 1, 1, date('Y') -1);
+            $endtime    = mktime(23, 59, 59, 12, 31, date('Y'));
+
+            $URL_history = $v2dataurl."/".$id."/measurements?resolution=YEAR&from=".$starttime."&to=".$endtime;
+
+            return $this->_getAndStoreData($URL_history, $token, $vars_api);
+        }          
+
+        // -------------------------------------------------------------------------        
         public function API_FullCycle() {
-            if($this->API_GetToken() > 0){
+            if(str_contains($this->API_GetToken(), "OK") == false){
                 return 1;
             }
-            if($this->API_GetID() > 0){
-                return 1;
+            if(str_contains($this->API_GetID(), "OK") == false){
+                return 2;
             }
-            if($this->API_GetData() > 0){
-                return 1;
+            if($this->ReadPropertyBoolean("SENEC_API_LiveData_Loop") == true) {            
+                if($this->API_GetData() != "OK"){
+                    return 3;
+                }
             }
+            if($this->ReadPropertyBoolean("SENEC_API_TechnicalData_Loop") == true) {
+                if($this->API_GetTechnicalInfos() != "OK"){
+                    return 4;
+                }
+            }
+            if($this->ReadPropertyBoolean("SENEC_API_Measurements_Loop") == true) {
+                if($this->API_GetMeasurements() != "OK"){
+                    return 5;
+                }
+            }               
             return 0;
         }
 
@@ -252,33 +289,171 @@
             curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);                      // keine Überprüfung des Peerzertifikats
             curl_setopt($curl, CURLOPT_FOLLOWLOCATION, false);                      // Keinen redirects folgen
         
-            $response = curl_exec($curl);                                           // Hier das Ergebnis
+            $response = curl_exec($curl);                                                          // Hier das Ergebnis
             $curl_errno = curl_errno($curl);
 
             if ($curl_errno > 0) {
                 $curl_error = curl_error($curl);
                 $msg = "FEHLER: ".$curl_error;
-                $this->_setIPSvar($this->InstanceID, "LOCAL_GetData Status", $msg);                
-                $this->_popupMessage($msg);
-                $this->_SetLALAupdateInterval(0);        
+                $this->LogMessage("LOCAL_GetData-".$msg, KL_ERROR);                                        // Eintrag ins SYMCON Logfile
+
+                // $this->_SetLALAupdateInterval(0);
+                $LOCALerrorCounter = $this->GetValue("SENEC_Local_ErrorCounter") +1;
+                $this->SetValue("SENEC_Local_ErrorCounter", $LOCALerrorCounter);
             }else{
-                $json = json_decode($response, true);                               // Dekodieren der Antwort
+                $json = json_decode($response, true);                                   // Dekodieren der Antwort
         
                 foreach ($json as $name => $value) {
                     $this->_setIPSvarLALA($vars_lala, $name, $value);                    
                 }
-                $this->_setIPSvar($this->InstanceID, "LOCAL_GetData Status", "OK");                                
+                $msg = "OK";
             }
+            $this->_setIPSvar($this->InstanceID, "LOCAL_GetData Status", $msg);
+            // $this->_popupMessage($msg);
+
+//            $this->LogMessage("KL_DEBUG: ".$msg, KL_DEBUG);                                       // Eintrag ins SYMCON Logfile   (nur bei "Meldungen" sichtbar)
+//            $this->LogMessage("KL_MESSAGE: ".$msg, KL_MESSAGE);                                   // Eintrag ins SYMCON Logfile   (nur bei "Meldungen" sichtbar)
+//            $this->LogMessage("KL_ERROR: ".$msg, KL_ERROR);                                       // Eintrag ins SYMCON Logfile   (landet auch in "Status")
+//            $this->LogMessage("KL_NOTIFY: ".$msg, KL_NOTIFY);                                     // Eintrag ins SYMCON Logfile   (landet auch in "Status")
+//            $this->LogMessage("KL_WARNING: "$msg, KL_WARNING);                                    // Eintrag ins SYMCON Logfile   (landet auch in "Status")
+
+//            parent::SendDebug("LOCAL_GetData", (string) $msg, 0);                                 // Befüllt das Debug-Fenster des Moduls
 
             curl_close($curl);                                                      // cURL Session beenden
 
-            return $curl_errno;
+            return $msg;
+        }
+
+        // -------------------------------------------------------------------------        
+        public function LOCAL_ForceCharging() {
+
+            $ip = $this->ReadPropertyString('SENEC_Local_IP');
+            $requestarray = $this->ReadPropertyString('SENEC_Local_Force_Charging');
+            $timeout = 15;
+
+            $curl = curl_init();
+
+            curl_setopt($curl, CURLOPT_URL, "https://".$ip."/lala.cgi");
+            curl_setopt($curl, CURLOPT_POST, true);                                 // Ein POST request soll es werden
+            curl_setopt($curl, CURLOPT_POSTFIELDS, $requestarray);                  // Request als URL-Codierten String schicken
+            curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);                       // Die Antwort bitte nicht an STDOUT
+            curl_setopt($curl, CURLOPT_TIMEOUT, $timeout);
+            curl_setopt($curl, CURLOPT_HEADER, false);                              // Bitte den Header nicht in die Ausgabe aufnehmen
+            curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, 0);                          // keine Prüfung ob Hostname im Zertifikat
+            curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);                      // keine Überprüfung des Peerzertifikats
+            curl_setopt($curl, CURLOPT_FOLLOWLOCATION, false);                      // Keinen redirects folgen
+        
+            $response = curl_exec($curl);                                                          // Hier das Ergebnis
+            $curl_errno = curl_errno($curl);
+
+            if ($curl_errno > 0) {
+                $curl_error = curl_error($curl);
+                $msg = "FEHLER: ".$curl_error;
+                $this->LogMessage("LOCAL_ForceCharging-".$msg, KL_ERROR);                                  // Eintrag ins SYMCON Logfile
+            }else{
+                $msg = "Manuelles Laden gestartet";
+            }
+            $this->_setIPSvar($this->InstanceID, "LOCAL_GetData Status", $msg);
+            // $this->_popupMessage($msg);                                              
+
+            curl_close($curl);                                                                     // cURL Session beenden
+
+            return $msg;
+        }
+
+        // -------------------------------------------------------------------------        
+        public function LOCAL_ProhibitCharging() {
+
+            $ip = $this->ReadPropertyString('SENEC_Local_IP');
+            $requestarray = $this->ReadPropertyString('SENEC_Local_Prohibit_Charging');
+            $timeout = 15;
+
+            $curl = curl_init();
+
+            curl_setopt($curl, CURLOPT_URL, "https://".$ip."/lala.cgi");
+            curl_setopt($curl, CURLOPT_POST, true);                                 // Ein POST request soll es werden
+            curl_setopt($curl, CURLOPT_POSTFIELDS, $requestarray);                  // Request als URL-Codierten String schicken
+            curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);                       // Die Antwort bitte nicht an STDOUT
+            curl_setopt($curl, CURLOPT_TIMEOUT, $timeout);
+            curl_setopt($curl, CURLOPT_HEADER, false);                              // Bitte den Header nicht in die Ausgabe aufnehmen
+            curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, 0);                          // keine Prüfung ob Hostname im Zertifikat
+            curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);                      // keine Überprüfung des Peerzertifikats
+            curl_setopt($curl, CURLOPT_FOLLOWLOCATION, false);                      // Keinen redirects folgen
+        
+            $response = curl_exec($curl);                                                          // Hier das Ergebnis
+            $curl_errno = curl_errno($curl);
+
+            if ($curl_errno > 0) {
+                $curl_error = curl_error($curl);
+                $msg = "FEHLER: ".$curl_error;
+                $this->LogMessage("LOCAL_ProhibitCharging-".$msg, KL_ERROR);                               // Eintrag ins SYMCON Logfile
+            }else{
+                $msg = "Manuelles Laden gestoppt";
+            }
+            $this->_setIPSvar($this->InstanceID, "LOCAL_GetData Status", $msg);                
+            // $this->_popupMessage($msg);
+
+
+            curl_close($curl);                                                                     // cURL Session beenden
+
+            return $msg;
         }
 
         // ---------------------------------------------------------------------------------------------------------------
         /**
         * interne Funktionen in diesem Modul
         **/
+        // -----------------------------------------------------
+        private function _getAndStoreData($URL, $token, $destination){
+
+            $user_agent  = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_1) AppleWebKit/537.36 (K HTML, like Gecko) Chrome/61.0.3163.100 Safari/537.36';
+
+            $curl = curl_init();                                                                                       // los geht's
+
+            curl_setopt($curl, CURLOPT_URL, $URL);                                              // URL zu den Daten
+            curl_setopt($curl, CURLOPT_POST, false);                                            // Diesesmal kein POST request
+
+            curl_setopt($curl, CURLOPT_USERAGENT, $user_agent);                                 // Hilft bei einer eventuellen Sessionvalidation auf Serverseite
+            curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, 0);                                      // keine Prüfung ob Hostname im Zertifikat
+            curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);                                  // keine Überprüfung des Peerzertifikats
+            curl_setopt($curl, CURLOPT_FOLLOWLOCATION, false);                                  // redirects nicht folgen
+        
+            curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);                                   // Die Antwort bitte als Rückgabewert von curl_exec
+        
+            $headers = [
+                'Content-Type: application/json',
+                'authorization: '.$token
+            ];
+            curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
+        
+            $response = curl_exec($curl);                                                                      // ok, jetzt ausführen
+            $curl_errno = curl_errno($curl);
+
+            if ($curl_errno > 0) {
+                $curl_error = curl_error($curl);
+                $msg = "FEHLER: ".$curl_error;
+                $this->LogMessage("getAndStoreData-".$msg, KL_ERROR);                                                  // Eintrag ins SYMCON Logfile
+
+//                $this->_SetAPIupdateInterval(0);                                                // Bei Fehler kein weiteres Update mehr
+                $APIerrorCounter = $this->GetValue("SENEC_API_ErrorCounter") +1;
+                $this->SetValue("SENEC_API_ErrorCounter", $APIerrorCounter);
+            } else {
+                $json = json_decode($response, true);
+
+                foreach ($json as $name => $value) {
+                    $this->_setIPSvar($destination, $name, $value);                    
+                }
+                $msg = "OK";
+            }
+            $this->_setIPSvar($this->InstanceID, "API_GetData Status", $msg);                
+            // $this->_popupMessage($msg);
+
+            curl_close($curl);                                                                                 // cURL Session beenden
+
+            return $msg;            
+        }
+
+                
         // -----------------------------------------------------
         private function _createIPScategory($parentID, $name){
 
