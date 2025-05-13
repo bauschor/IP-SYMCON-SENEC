@@ -11,7 +11,7 @@
                 { "type": "CheckBox", "name": "SENEC_API_Measurements_Loop", "caption": "Historische Daten zyklisch abfragen" },
                 { "type": "ExpansionPanel", "caption": "Experten-Einstellungen",
                     "items": [
-                        { "type": "ValidationTextBox", "name": "SENEC_API_Login_Url", "caption": "Login URL", "width": "700px" , "multiline": "true" },
+                        { "type": "ValidationTextBox", "name": "SENEC_APIv1_Login_Url", "caption": "Login URL", "width": "700px" , "multiline": "true" },
                         { "type": "ValidationTextBox", "name": "SENEC_APIv1_Data_Url", "caption": "API v1 URL", "width": "700px" , "multiline": "true" },
                         { "type": "ValidationTextBox", "name": "SENEC_APIv2_Data_Url", "caption": "API v2 URL", "width": "700px" , "multiline": "true" }
                     ]
