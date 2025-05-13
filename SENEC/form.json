@@ -8,7 +8,14 @@
                 { "type": "NumberSpinner", "name": "SENEC_API_Data_Update_Interval", "caption": "API Updatezyklus (Minuten); 0 = niemals" },
                 { "type": "CheckBox", "name": "SENEC_API_TechnicalData_Loop", "caption": "Anlagen-Infos zyklisch abfragen" },
                 { "type": "CheckBox", "name": "SENEC_API_LiveData_Loop", "caption": "Livedaten zyklisch abfragen" },
-                { "type": "CheckBox", "name": "SENEC_API_Measurements_Loop", "caption": "Historische Daten zyklisch abfragen" }
+                { "type": "CheckBox", "name": "SENEC_API_Measurements_Loop", "caption": "Historische Daten zyklisch abfragen" },
+                { "type": "ExpansionPanel", "caption": "Experten-Einstellungen",
+                    "items": [
+                        { "type": "ValidationTextBox", "name": "SENEC_API_Login_Url", "caption": "Login URL" },
+                        { "type": "ValidationTextBox", "name": "SENEC_APIv1_Data_Url", "caption": "API v1 URL" },
+                        { "type": "ValidationTextBox", "name": "SENEC_APIv2_Data_Url", "caption": "API v2 URL" }
+                    ]
+                }
             ]
         },
         { "type": "ExpansionPanel", "caption": "Einstellungen für den lokalen Zugriff auf den SENEC Speicher",
